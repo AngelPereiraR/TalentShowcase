@@ -130,7 +130,6 @@ export default {
 
 .theme-toggle input {
   display: none;
-  /* Oculta el checkbox */
 }
 
 .theme-toggle input:checked+.theme-toggle__label {

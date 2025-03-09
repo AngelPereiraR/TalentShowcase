@@ -128,7 +128,7 @@ export default {
 }
 
 .feature-card {
-  background-color: white;
+  background-color: var(--neutral-textos-50);
   border-radius: 0.625rem;
   box-shadow: 0 0.3125rem 0.9375rem rgba(var(--sombras-100), 0.1);
   padding: 2rem;
@@ -180,7 +180,7 @@ export default {
 }
 
 .detail-card {
-  background-color: white;
+  background-color: var(--neutral-textos-50);
   border-radius: 0.625rem;
   box-shadow: 0 0.3125rem 0.9375rem rgba(var(--sombras-100), 0.1);
   padding: 2rem;
