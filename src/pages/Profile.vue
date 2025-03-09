@@ -3,7 +3,9 @@
     <div class="profile-content">
       <div class="profile-header">
         <div class="header-content">
-          <h1 class="profile-title">Juan Pérez - juanperez@gmail.com</h1>
+          <h1 class="profile-title" v-if="user">
+            {{ user.username }} - {{ user.email }}
+          </h1>
           <p class="profile-subtitle">Edita el perfil para añadir más información personal</p>
         </div>
         <div class="profile-sidebar">
@@ -45,6 +47,19 @@
     </div>
   </div>
 </template>
+
+<script>
+import { useAuthStore } from '../stores/authStore';
+
+export default {
+  name: 'Profile',
+  computed: {
+    user() {
+      return useAuthStore().user;
+    }
+  }
+}
+</script>
 
 <style scoped>
 .profile-container {
@@ -148,6 +163,12 @@
 
 .action-text {
   font-size: var(--font-size-text-normal);
+}
+
+@media (max-width: 1450px) {
+  .profile-header {
+    padding: 8rem 0;
+  }
 }
 
 @media (max-width: 768px) {

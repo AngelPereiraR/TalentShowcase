@@ -205,7 +205,7 @@ export default {
   color: var(--neutral-textos-600);
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1450px) {
   .header__content {
     flex-direction: column;
     gap: 1rem;
