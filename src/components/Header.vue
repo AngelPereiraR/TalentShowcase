@@ -1,29 +1,26 @@
 <template>
   <header class="header">
     <div class="container">
-      <div class="header-content">
+      <div class="header__content">
         <div class="logo">
           <img src="@/assets/logo-portfolio.webp" alt="TalentShowcase" />
-          <h1>TalentShowcase</h1>
+          <h1 class="logo__title">TalentShowcase</h1>
         </div>
-        <nav class="nav-menu">
+        <nav class="nav__menu">
           <ul>
             <li><a href="#">Inicio</a></li>
             <li><a href="#">Características</a></li>
             <li><a href="#">Contacto</a></li>
           </ul>
         </nav>
-        <div class="header-actions">
-          <div class="language-toggle">
-            <span>ES</span>
-          </div>
+        <div class="header__actions">
           <div class="theme-toggle">
             <input type="checkbox" id="theme-switch" />
-            <label for="theme-switch"></label>
+            <label for="theme-switch" class="theme-toggle__label"></label>
           </div>
           <div class="auth-buttons">
-            <a href="#" class="btn-login">Iniciar</a>
-            <a href="#" class="btn-register">Registrarse</a>
+            <a href="#" class="btn--login">Iniciar</a>
+            <a href="#" class="btn--register">Registrarse</a>
           </div>
         </div>
       </div>
@@ -39,9 +36,9 @@ export default {
 
 <style scoped>
 .header {
-  background-color: white;
-  padding: 15px 0;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: var(--neutral-textos-100);
+  padding: 1.5rem 0;
+  box-shadow: 0 0.125rem 0.3125rem rgba(var(--sombras-100), 0.1);
   position: fixed;
   top: 0;
   z-index: 100;
@@ -49,11 +46,12 @@ export default {
 }
 
 .container {
+  max-width: 90%;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 1.25rem;
 }
 
-.header-content {
+.header__content {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -65,93 +63,125 @@ export default {
 }
 
 .logo img {
-  height: 40px;
-  margin-right: 10px;
+  height: 4rem;
+  margin-right: 0.625rem;
 }
 
-.logo h1 {
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
+.logo__title {
+  font-family: var(--font-family-menu);
+  font-weight: var(--font-weight-menu);
+  font-size: var(--font-size-menu-desktop);
+  color: var(--neutral-textos-900);
   margin: 0;
 }
 
-.nav-menu ul {
+.nav__menu ul {
   display: flex;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.nav-menu li {
-  margin: 0 15px;
+.nav__menu li {
+  margin: 0 1.5rem;
 }
 
-.nav-menu a {
+.nav__menu a {
   text-decoration: none;
-  color: #333;
-  font-size: 16px;
+  color: var(--neutral-textos-700);
+  font-family: var(--font-family-text-normal);
+  font-weight: var(--font-weight-text-normal);
+  font-size: 1rem;
 }
 
-.header-actions {
+.header__actions {
   display: flex;
   align-items: center;
 }
 
-.language-toggle {
-  margin-right: 20px;
-  font-size: 16px;
+.theme-toggle__label {
+  position: relative;
+  display: inline-block;
+  width: 2.5rem;
+  height: 1.5rem;
+  background-color: var(--primario-300);
+  border-radius: 1.25rem;
+  margin-right: 1.25rem;
+  transition: background-color 0.3s;
 }
 
-.theme-toggle {
-  margin-right: 20px;
+.theme-toggle__label::after {
+  content: '';
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  background-color: var(--neutral-textos-50);
+  border-radius: 50%;
+  top: 0.25rem;
+  left: 0.25rem;
+  transition: transform 0.3s;
 }
 
 .theme-toggle input {
   display: none;
+  /* Oculta el checkbox */
 }
 
-.theme-toggle label {
-  position: relative;
-  display: inline-block;
-  width: 40px;
-  height: 20px;
-  background-color: #ccc;
-  border-radius: 10px;
-  transition: background-color 0.3s;
+.theme-toggle input:checked+.theme-toggle__label {
+  background-color: var(--primario-500);
 }
 
-.theme-toggle input:checked+label {
-  background-color: #2196F3;
+.theme-toggle input:checked+.theme-toggle__label::after {
+  transform: translateX(1rem);
 }
 
-.theme-toggle label::after {
-  content: '';
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  background-color: white;
-  border-radius: 50%;
-  top: 2px;
-  left: 2px;
-  transition: transform 0.3s;
-}
-
-.theme-toggle input:checked+label::after {
-  transform: translateX(20px);
-}
-
-.auth-buttons a {
+.auth-buttons .btn--login,
+.auth-buttons .btn--register {
   text-decoration: none;
-  margin-left: 15px;
-  font-size: 16px;
+  margin-left: 1.5rem;
+  font-size: 1rem;
+  font-family: var(--font-family-text-normal);
+  font-weight: var(--font-weight-text-normal);
 }
 
-.btn-login {
-  color: #333;
+.btn--login {
+  color: var(--neutral-textos-700);
 }
 
-.btn-register {
-  color: #666;
+.btn--register {
+  color: var(--neutral-textos-600);
+}
+
+@media (max-width: 1200px) {
+  .header__content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+/* Media Query para Tablet */
+@media (max-width: 768px) {
+  .header__content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .logo img {
+    height: 3rem;
+  }
+
+  .logo__title {
+    font-size: var(--font-size-menu-mobile);
+  }
+
+  .auth-buttons {
+    width: 100%;
+    text-align: center;
+  }
+
+  .auth-buttons .btn--login,
+  .auth-buttons .btn--register {
+    margin: 0 0.5rem;
+  }
 }
 </style>
