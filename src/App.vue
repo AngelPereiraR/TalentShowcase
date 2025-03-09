@@ -3,6 +3,7 @@
     <Header />
 
     <main>
+      <Spinner v-if="isLoading" />
       <router-view />
     </main>
 
@@ -13,12 +14,20 @@
 <script>
 import Header from './components/Header.vue';
 import Footer from './components/Footer.vue';
+import Spinner from './components/Spinner.vue';
+import { useLoadingStore } from './stores/loadingStore';
 
 export default {
   name: 'App',
   components: {
     Header,
-    Footer
+    Footer,
+    Spinner
+  },
+  computed: {
+    isLoading() {
+      return useLoadingStore().isLoading
+    }
   }
 }
 </script>

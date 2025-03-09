@@ -3,6 +3,8 @@ import Home from '../pages/Home.vue'
 import Login from '../pages/Login.vue'
 import Register from '../pages/Register.vue'
 import Error404 from '../pages/Error404.vue'
+import { useAuthStore } from '../stores/authStore'
+import { useLoadingStore } from '../stores/loadingStore';
 
 // Lazy load para las páginas que no son críticas en la carga inicial
 const Portfolio = () => import('../pages/Portfolio.vue')
@@ -64,6 +66,19 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes
+})
+
+// Guard de navegación para verificar autenticación en cada página
+router.beforeEach(async (to, from, next) => {
+  const loadingStore = useLoadingStore()
+  loadingStore.show()
+  const authStore = useAuthStore()
+  await authStore.checkAuth()
+  next()
+})
+router.afterEach(() => {
+  const loadingStore = useLoadingStore()
+  loadingStore.hide()
 })
 
 export default router

@@ -10,6 +10,8 @@
           <ul>
             <li><router-link :to="{ name: 'Home' }">Inicio</router-link></li>
             <li><router-link :to="{ name: 'Characteristics' }">Características</router-link></li>
+            <li v-if="isAuthenticated"><router-link
+                :to="{ name: 'Portfolio', params: { id: 1 } }">Portafolio</router-link></li>
             <li><router-link :to="{ name: 'Contact' }">Contacto</router-link></li>
           </ul>
         </nav>
@@ -19,14 +21,26 @@
             <label for="theme-switch" class="theme-toggle__label"></label>
           </div>
           <div class="auth-buttons">
-            <router-link :to="{ name: 'Login' }" class="btn--login">
-              <i class="fas fa-sign-in-alt"></i>
-              Iniciar
-            </router-link>
-            <router-link :to="{ name: 'Register' }" class="btn--register">
-              <i class="fas fa-user-plus"></i>
-              Registrarse
-            </router-link>
+            <template v-if="isAuthenticated && userId">
+              <router-link :to="{ name: 'Profile', params: { id: userId } }" class="btn--profile">
+                <i class="fas fa-user"></i>
+                Perfil
+              </router-link>
+              <button @click="logout" class="btn--logout">
+                <i class="fas fa-sign-out-alt"></i>
+                Cerrar Sesión
+              </button>
+            </template>
+            <template v-else>
+              <router-link :to="{ name: 'Login' }" class="btn--login">
+                <i class="fas fa-sign-in-alt"></i>
+                Iniciar
+              </router-link>
+              <router-link :to="{ name: 'Register' }" class="btn--register">
+                <i class="fas fa-user-plus"></i>
+                Registrarse
+              </router-link>
+            </template>
           </div>
         </div>
       </div>
@@ -35,8 +49,23 @@
 </template>
 
 <script>
+import { useAuthStore } from '../stores/authStore';
+
 export default {
-  name: 'Header'
+  name: 'Header',
+  computed: {
+    isAuthenticated() {
+      return useAuthStore().isAuthenticated;
+    },
+    userId() {
+      return useAuthStore().getUserId;
+    }
+  },
+  methods: {
+    logout() {
+      useAuthStore().logout();
+    }
+  }
 }
 </script>
 
@@ -141,12 +170,31 @@ export default {
 }
 
 .auth-buttons .btn--login,
-.auth-buttons .btn--register {
+.auth-buttons .btn--register,
+.auth-buttons .btn--profile,
+.auth-buttons .btn--logout {
   text-decoration: none;
   margin-left: 1.5rem;
   font-size: 1rem;
   font-family: var(--font-family-text-normal);
   font-weight: var(--font-weight-text-normal);
+}
+
+.btn--profile {
+  color: var(--neutral-textos-700);
+}
+
+.btn--logout {
+  background-color: var(--errors-500);
+  color: var(--neutral-textos-50);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.3125rem;
+  cursor: pointer;
+}
+
+.btn--logout:hover {
+  background-color: var(--errors-600);
 }
 
 .btn--login {
