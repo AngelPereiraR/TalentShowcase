@@ -41,7 +41,7 @@
 }
 
 .hero {
-  background-color: var(--primario-200);
+  background: linear-gradient(to right, var(--hover-400), var(--hover-100));
   padding: 16rem 0 10rem;
   text-align: center;
   color: var(--neutral-textos-900);

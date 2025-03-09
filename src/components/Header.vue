@@ -8,9 +8,9 @@
         </div>
         <nav class="nav__menu">
           <ul>
-            <li><a href="#">Inicio</a></li>
-            <li><a href="#">Características</a></li>
-            <li><a href="#">Contacto</a></li>
+            <li><router-link :to="{ name: 'Home' }">Inicio</router-link></li>
+            <li><router-link :to="{ name: 'Characteristics' }">Características</router-link></li>
+            <li><router-link :to="{ name: 'Contact' }">Contacto</router-link></li>
           </ul>
         </nav>
         <div class="header__actions">
@@ -19,8 +19,14 @@
             <label for="theme-switch" class="theme-toggle__label"></label>
           </div>
           <div class="auth-buttons">
-            <a href="#" class="btn--login">Iniciar</a>
-            <a href="#" class="btn--register">Registrarse</a>
+            <router-link :to="{ name: 'Login' }" class="btn--login">
+              <i class="fas fa-sign-in-alt"></i>
+              Iniciar
+            </router-link>
+            <router-link :to="{ name: 'Register' }" class="btn--register">
+              <i class="fas fa-user-plus"></i>
+              Registrarse
+            </router-link>
           </div>
         </div>
       </div>

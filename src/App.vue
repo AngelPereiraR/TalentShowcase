@@ -50,7 +50,7 @@ export default {
   --primario-900: #0D1217;
 
   /* Secundario */
-  --secundario-50: #f8f8f8;
+  --secundario-50: #fbfcfc;
   --secundario-100: #f7f7f7;
   --secundario-200: #f4f4f4;
   --secundario-300: #f0f0f0;
@@ -62,8 +62,8 @@ export default {
   --secundario-900: #3a4a4e;
 
   /* Botones */
-  --botones-50: #acb8ef;
-  --botones-100: #9771df;
+  --botones-50: #cbf8ef;
+  --botones-100: #97f1df;
   --botones-200: #63e9cf;
   --botones-300: #2fe2bf;
   --botones-400: #1ABC9C;
@@ -86,16 +86,16 @@ export default {
   --hover-900: #0c2c42;
 
   /* Errors */
-  --errors-50: #d6eaf8;
-  --errors-100: #aed6f1;
-  --errors-200: #85c1e9;
-  --errors-300: #5dade2;
-  --errors-400: #3498DB;
-  --errors-500: #2384c5;
-  --errors-600: #1d6ea4;
-  --errors-700: #175884;
-  --errors-800: #114263;
-  --errors-900: #0c2c42;
+  --errors-50: #ffebee;
+  --errors-100: #ffcdd2;
+  --errors-200: #ef9a9a;
+  --errors-300: #e57373;
+  --errors-400: #ef5350;
+  --errors-500: #f44336;
+  --errors-600: #e53935;
+  --errors-700: #d32f2f;
+  --errors-800: #c62828;
+  --errors-900: #b71c1c;
 
   /* Sombras */
   --sombras-50: #FFFFFF;
@@ -105,12 +105,12 @@ export default {
   --font-family-title: 'Montserrat';
   --font-weight-title: bold;
   --font-size-title-desktop: 3.5rem;
-  --font-size-title-mobile: 2.5rem;
+  --font-size-title-mobile: 2.25rem;
 
   --font-family-menu: 'Montserrat';
   --font-weight-menu: medium;
   --font-size-menu-desktop: 3rem;
-  --font-size-menu-mobile: 2rem;
+  --font-size-menu-mobile: 1.75rem;
 
   --font-family-subtitle: 'Montserrat';
   --font-weight-subtitle: semibold;
