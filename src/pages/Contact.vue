@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section class="contact-header">
+    <section class="contact-header" :class="{ 'dark-mode': isDarkMode }">
       <div class="container">
         <h2 class="contact__title">¿Tienes alguna duda o sugerencia?</h2>
         <p class="contact__subtitle">
@@ -9,7 +9,7 @@
       </div>
     </section>
 
-    <section class="contact-form">
+    <section class="contact-form" :class="{ 'dark-mode': isDarkMode }">
       <div class="container">
         <form class="form-container" @submit.prevent="handleSubmit">
           <div class="form-group">
@@ -44,8 +44,15 @@
 </template>
 
 <script>
+import { useThemeStore } from '../stores/themeStore';
+
 export default {
   name: 'Contact',
+  computed: {
+    isDarkMode() {
+      return useThemeStore().isDarkMode;
+    }
+  },
   data() {
     return {
       form: {
@@ -194,6 +201,57 @@ export default {
 
 .btn--submit:hover {
   background-color: var(--botones-500);
+}
+
+.contact-header.dark-mode {
+  background-color: var(--primario-900);
+  color: var(--neutral-textos-200);
+}
+
+.contact-header.dark-mode .contact__title {
+  color: var(--neutral-textos-200);
+}
+
+.contact-header.dark-mode .contact__subtitle {
+  color: var(--neutral-textos-400);
+}
+
+.contact-form.dark-mode {
+  background-color: var(--primario-800);
+}
+
+.contact-form.dark-mode .form-container {
+  background-color: var(--primario-700);
+  box-shadow: 0 0.3125rem 0.9375rem rgba(var(--sombras-900), 0.2);
+}
+
+.contact-form.dark-mode .form-label {
+  color: var(--neutral-textos-400);
+}
+
+.contact-form.dark-mode .form-input,
+.contact-form.dark-mode .form-textarea {
+  background-color: var(--primario-600);
+  border-color: var(--neutral-textos-500);
+  color: var(--neutral-textos-200);
+}
+
+.contact-form.dark-mode .form-input:invalid,
+.contact-form.dark-mode .form-textarea:invalid {
+  border-color: var(--errors-500);
+}
+
+.contact-form.dark-mode .error-message {
+  color: var(--errors-500);
+}
+
+.contact-form.dark-mode .btn--submit {
+  background-color: var(--botones-900);
+  color: var(--neutral-textos-100);
+}
+
+.contact-form.dark-mode .btn--submit:hover {
+  background-color: var(--botones-600);
 }
 
 /* Media Queries para pantallas pequeñas */

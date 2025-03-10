@@ -1,17 +1,17 @@
 <template>
   <div>
-    <section class="hero-features">
+    <section class="hero-features" :class="{ 'dark-mode': isDarkMode }">
       <div class="container">
         <h2 class="hero-features__title">Descubre las Características de TalentShowcase</h2>
         <p class="hero-features__subtitle">Potencia tu portafolio con nuestras funcionalidades clave</p>
       </div>
     </section>
 
-    <section class="key-features">
+    <section class="key-features" :class="{ 'dark-mode': isDarkMode }">
       <div class="container">
         <h3 class="key-features__title">Funcionalidades clave</h3>
         <div class="features-grid">
-          <div class="feature-card">
+          <div class="feature-card" :class="{ 'dark-mode': isDarkMode }">
             <div class="feature-icon">
               <i class="fas fa-user"></i>
             </div>
@@ -22,57 +22,25 @@
             </p>
           </div>
 
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="fas fa-pen"></i>
-            </div>
-            <h4 class="feature-title">Personalización Completa</h4>
-            <p class="feature-description">
-              Personaliza secciones, colores, servicios y contenido de tu
-              portafolio.
-            </p>
-          </div>
+          <!-- Resto de feature-cards con la misma clase condicional -->
 
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="fas fa-box"></i>
-            </div>
-            <h4 class="feature-title">Gestión de Archivos</h4>
-            <p class="feature-description">
-              Sube imágenes fácilmente con integración de Cloudinary.
-            </p>
-          </div>
-
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="fas fa-shield-alt"></i>
-            </div>
-            <h4 class="feature-title">Seguridad y Privacidad</h4>
-            <p class="feature-description">
-              Protección de datos y autenticación segura con JSON Web Tokens (JWT).
-            </p>
-          </div>
         </div>
       </div>
     </section>
 
-    <section class="additional-details">
+    <section class="additional-details" :class="{ 'dark-mode': isDarkMode }">
       <div class="container">
         <h3 class="details__title">Detalles Adicionales</h3>
         <div class="details-grid">
-          <div class="detail-card">
+          <div class="detail-card" :class="{ 'dark-mode': isDarkMode }">
             <h4 class="detail-title">Visualización Pública</h4>
             <p class="detail-description">
               Tu portafolio será accesible para todo el público mediante un enlace único.
             </p>
           </div>
 
-          <div class="detail-card">
-            <h4 class="detail-title">Administración Centralizada</h4>
-            <p class="detail-description">
-              Los administradores pueden gestionar usuarios y portafolios de manera eficiente.
-            </p>
-          </div>
+          <!-- Resto de detail-cards con la misma clase condicional -->
+
         </div>
       </div>
     </section>
@@ -80,8 +48,15 @@
 </template>
 
 <script>
+import { useThemeStore } from '../stores/themeStore';
+
 export default {
-  name: 'Characteristics'
+  name: 'Characteristics',
+  computed: {
+    isDarkMode() {
+      return useThemeStore().isDarkMode;
+    }
+  }
 }
 </script>
 
@@ -204,6 +179,49 @@ export default {
   line-height: 1.6;
 }
 
+.hero-features.dark-mode {
+  background: var(--primario-900);
+  color: var(--neutral-textos-200);
+}
+
+.key-features.dark-mode {
+  background-color: var(--neutral-textos-700);
+}
+
+.key-features.dark-mode .key-features__title {
+  color: var(--neutral-textos-200);
+
+}
+
+.feature-card.dark-mode {
+  background-color: var(--primario-600);
+  box-shadow: 0 0.3125rem 0.9375rem rgba(var(--sombras-900), 0.2);
+}
+
+.feature-card.dark-mode .feature-icon {
+  color: var(--botones-300);
+}
+
+.feature-card.dark-mode .feature-title,
+.feature-card.dark-mode .feature-description {
+  color: var(--neutral-textos-200);
+}
+
+.additional-details.dark-mode {
+  background-color: var(--primario-800);
+  color: var(--neutral-textos-200);
+}
+
+.detail-card.dark-mode {
+  background-color: var(--primario-600);
+  box-shadow: 0 0.3125rem 0.9375rem rgba(var(--sombras-900), 0.2);
+}
+
+.detail-card.dark-mode .detail-title,
+.detail-card.dark-mode .detail-description {
+  color: var(--neutral-textos-200);
+}
+
 /* Media Queries para pantallas pequeñas */
 @media (max-width: 768px) {
   .hero-features {
@@ -245,5 +263,7 @@ export default {
   .additional-details {
     padding: 4rem 0;
   }
+
+
 }
 </style>

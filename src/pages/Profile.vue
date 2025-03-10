@@ -13,10 +13,10 @@
             <i class="fas fa-user-circle avatar-icon"></i>
           </div>
           <div class="profile-actions">
-            <div class="action-item">
+            <router-link :to="{ name: 'EditProfile', params: { id: user.id } }" class="action-item">
               <i class="fas fa-id-card"></i>
               <span class="action-text">Editar Datos del perfil</span>
-            </div>
+            </router-link>
             <div class="action-item">
               <i class="fas fa-folder-plus"></i>
               <span class="action-text">Editar Portafolio</span>

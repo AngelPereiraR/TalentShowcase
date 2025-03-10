@@ -1,5 +1,5 @@
 <template>
-  <footer class="footer">
+  <footer class="footer" :class="{ 'dark-mode': isDarkMode }">
     <div class="container">
       <div class="footer__content">
         <div class="footer__copyright">
@@ -8,7 +8,7 @@
             BY-NC-ND 4.0</a>
         </div>
         <div class="footer__contact">
-          <a href="#" class="link--internal">Contacta con nosotros</a>
+          <router-link :to="{ name: 'Contact' }" class="link--internal">Contacta con nosotros</router-link>
         </div>
       </div>
     </div>
@@ -16,8 +16,15 @@
 </template>
 
 <script>
+import { useThemeStore } from '../stores/themeStore';
+
 export default {
-  name: 'Footer'
+  name: 'Footer',
+  computed: {
+    isDarkMode() {
+      return useThemeStore().isDarkMode;
+    }
+  }
 }
 </script>
 
@@ -29,6 +36,15 @@ export default {
   font-weight: var(--font-weight-text-normal);
   font-size: var(--font-size-text-normal);
   color: var(--neutral-textos-700);
+}
+
+.footer.dark-mode {
+  background-color: var(--neutral-textos-800);
+}
+
+.footer.dark-mode,
+.footer.dark-mode a {
+  color: var(--neutral-textos-200);
 }
 
 .footer__content {
@@ -49,6 +65,10 @@ export default {
   margin: 0 0.3125rem;
 }
 
+.link--external:hover {
+  color: var(--primario-500);
+}
+
 .footer__contact {
   text-align: right;
 }
@@ -60,9 +80,10 @@ export default {
 
 .link--internal:hover {
   text-decoration: underline;
+  color: var(--primario-500);
 }
 
-/* Media Query para Tablet */
+/* Media Query for Tablet */
 @media (max-width: 768px) {
   .footer__content {
     flex-direction: column;

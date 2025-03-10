@@ -1,17 +1,18 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../pages/Home.vue'
-import Login from '../pages/Login.vue'
-import Register from '../pages/Register.vue'
-import Error404 from '../pages/Error404.vue'
 import { useAuthStore } from '../stores/authStore'
 import { useLoadingStore } from '../stores/loadingStore';
 
 // Lazy load para las páginas que no son críticas en la carga inicial
 const Portfolio = () => import('../pages/Portfolio.vue')
+const Login = () => import('../pages/Login.vue')
+const Register = () => import('../pages/Register.vue')
+const Error404 = () => import('../pages/Error404.vue')
 const Profile = () => import('../pages/Profile.vue')
 const PortfolioDesign = () => import('../pages/Portfolio-design.vue')
 const Contact = () => import('../pages/Contact.vue')
 const Characteristics = () => import('../pages/Characteristics.vue')
+const EditProfile = () => import('../pages/EditProfile.vue')
 
 const routes = [
   {
@@ -32,14 +33,17 @@ const routes = [
   {
     path: '/profile/:id',
     name: 'Profile',
-    component: Profile,
-    children: [
-      {
-        path: 'portfolio-design',
-        name: 'PortfolioDesign',
-        component: PortfolioDesign
-      }
-    ]
+    component: Profile
+  },
+  {
+    path: '/profile/:id/portfolio-design',
+    name: 'PortfolioDesign',
+    component: PortfolioDesign
+  },
+  {
+    path: '/profile/:id/edit',
+    name: 'EditProfile',
+    component: EditProfile
   },
   {
     path: '/portfolio/:id',

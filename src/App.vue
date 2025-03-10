@@ -16,6 +16,7 @@ import Header from './components/Header.vue';
 import Footer from './components/Footer.vue';
 import Spinner from './components/Spinner.vue';
 import { useLoadingStore } from './stores/loadingStore';
+import { useThemeStore } from './stores/themeStore';
 
 export default {
   name: 'App',
@@ -27,7 +28,13 @@ export default {
   computed: {
     isLoading() {
       return useLoadingStore().isLoading
+    },
+    isDarkMode() {
+      return useThemeStore().isDarkMode
     }
+  },
+  mounted() {
+    useThemeStore().loadThemePreference();
   }
 }
 </script>

@@ -1,8 +1,8 @@
 <template>
   <div>
-    <section class="register">
+    <section class="register" :class="{ 'dark-mode': isDarkMode }">
       <div class="container">
-        <div class="register__card">
+        <div class="register__card" :class="{ 'dark-mode': isDarkMode }">
           <h2 class="register__title">Registrarse</h2>
 
           <form @submit.prevent="handleSubmit">
@@ -62,13 +62,19 @@
 </template>
 
 <script>
-import Modal from '../components/Modal.vue'
+import { useThemeStore } from '../stores/themeStore';
+import Modal from '../components/Modal.vue';
 import { useAuthStore } from '../stores/authStore';
 
 export default {
   name: 'Register',
   components: {
     Modal
+  },
+  computed: {
+    isDarkMode() {
+      return useThemeStore().isDarkMode;
+    }
   },
   data() {
     return {
@@ -326,6 +332,59 @@ export default {
 
 .register__links a:hover {
   text-decoration: underline;
+}
+
+/* Nuevo estilo para modo oscuro */
+.register.dark-mode {
+  background: var(--primario-900);
+}
+
+.register__card.dark-mode {
+  background-color: var(--primario-700);
+  box-shadow: 0 0.3125rem 0.9375rem rgba(var(--sombras-900), 0.2);
+}
+
+.register.dark-mode .register__title {
+  color: var(--neutral-textos-200);
+}
+
+.register.dark-mode .form-label {
+  color: var(--neutral-textos-400);
+}
+
+.register.dark-mode .form-input {
+  background-color: var(--primario-600);
+  border-color: var(--neutral-textos-500);
+  color: var(--neutral-textos-200);
+}
+
+.register.dark-mode .form-input:invalid {
+  border-color: var(--errors-500);
+}
+
+.register.dark-mode .error-message {
+  color: var(--errors-500);
+}
+
+.register.dark-mode .btn--submit {
+  background-color: var(--botones-900);
+  color: var(--neutral-textos-100);
+}
+
+.register.dark-mode .btn--submit:hover {
+  background-color: var(--botones-600);
+}
+
+.register.dark-mode .register__links p {
+  color: var(--neutral-textos-400);
+}
+
+.register.dark-mode .register__links a {
+  color: var(--botones-300);
+}
+
+.register.dark-mode .terms-label a {
+  color: var(--botones-300);
 }
 
 /* Media Queries para pantallas pequeñas */

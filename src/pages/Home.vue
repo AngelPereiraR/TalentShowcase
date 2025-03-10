@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section class="hero">
+    <section class="hero" :class="{ 'dark-mode': isDarkMode }">
       <div class="container">
         <h2 class="hero__title">Muestra tu talento al mundo</h2>
         <p class="hero__subtitle">Crea tu portafolio en línea de manera fácil y personalizada</p>
@@ -8,7 +8,7 @@
       </div>
     </section>
 
-    <section class="about">
+    <section class="about" :class="{ 'dark-mode': isDarkMode }">
       <div class="container">
         <h3 class="about__title">¿Qué es TalentShowcase?</h3>
         <p class="about__text">
@@ -19,7 +19,7 @@
       </div>
     </section>
 
-    <section class="portfolio-example">
+    <section class="portfolio-example" :class="{ 'dark-mode': isDarkMode }">
       <div class="container">
         <h3 class="portfolio-example__title">Ejemplo de portafolio</h3>
         <div class="portfolio-example__image">
@@ -31,6 +31,16 @@
 </template>
 
 <script>
+import { useThemeStore } from '../stores/themeStore';
+
+export default {
+  name: 'Home',
+  computed: {
+    isDarkMode() {
+      return useThemeStore().isDarkMode;
+    }
+  }
+}
 </script>
 
 <style scoped>
@@ -45,6 +55,20 @@
   padding: 16rem 0 10rem;
   text-align: center;
   color: var(--neutral-textos-900);
+}
+
+.hero.dark-mode {
+  background: var(--primario-900);
+  color: var(--neutral-textos-200);
+}
+
+.hero.dark-mode button {
+  background-color: var(--botones-900);
+  color: var(--neutral-textos-100);
+}
+
+.hero.dark-mode button:hover {
+  background-color: var(--botones-600);
 }
 
 .hero__title {
@@ -81,12 +105,16 @@
   text-align: center;
 }
 
+.about.dark-mode {
+  background-color: var(--neutral-textos-700);
+  color: var(--neutral-textos-200);
+}
+
 .about__title {
   font-family: var(--font-family-menu);
   font-weight: var(--font-weight-menu);
   font-size: var(--font-size-menu-desktop);
   margin-bottom: 1.25rem;
-  color: var(--neutral-textos-900);
 }
 
 .about__text {
@@ -101,6 +129,11 @@
   padding: 7.5rem 0;
   text-align: center;
   color: var(--neutral-textos-900);
+}
+
+.portfolio-example.dark-mode {
+  background-color: var(--primario-900);
+  color: var(--neutral-textos-200);
 }
 
 .portfolio-example__title {
@@ -121,7 +154,7 @@
   box-shadow: 0 0.3125rem 0.9375rem rgba(var(--sombras-100), 0.2);
 }
 
-/* Media Queries para pantallas pequeñas */
+/* Media Queries for small screens */
 @media (max-width: 768px) {
   .container {
     padding: 0 1rem;

@@ -1,17 +1,17 @@
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-import App from './App.vue'
-import router from './router/router'
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router/router';
+import { createPinia } from 'pinia';
+import { useThemeStore } from './stores/themeStore';
 
-// Crea la aplicación
-const app = createApp(App)
+const app = createApp(App);
+const pinia = createPinia();
 
-// Crea e instancia de Pinia
-const pinia = createPinia()
+app.use(pinia);
+app.use(router);
 
-// Usa Pinia y Router en la aplicación
-app.use(pinia)
-app.use(router)
+app.mount('#app');
 
-// Monta la aplicación
-app.mount('#app')
+// Cargar preferencia de tema al inicio de la aplicación
+const themeStore = useThemeStore();
+themeStore.loadThemePreference();

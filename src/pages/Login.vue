@@ -1,8 +1,8 @@
 <template>
   <div>
-    <section class="login">
+    <section class="login" :class="{ 'dark-mode': isDarkMode }">
       <div class="container">
-        <div class="login__card">
+        <div class="login__card" :class="{ 'dark-mode': isDarkMode }">
           <h2 class="login__title">Iniciar Sesión</h2>
 
           <form @submit.prevent="handleSubmit">
@@ -39,13 +39,19 @@
 </template>
 
 <script>
-import Modal from '../components/Modal.vue'
+import { useThemeStore } from '../stores/themeStore';
+import Modal from '../components/Modal.vue';
 import { useAuthStore } from '../stores/authStore';
 
 export default {
   name: 'Login',
   components: {
     Modal
+  },
+  computed: {
+    isDarkMode() {
+      return useThemeStore().isDarkMode;
+    }
   },
   data() {
     return {
@@ -222,6 +228,55 @@ export default {
 
 .login__links a:hover {
   text-decoration: underline;
+}
+
+/* Nuevo estilo para modo oscuro */
+.login.dark-mode {
+  background: var(--primario-900);
+}
+
+.login__card.dark-mode {
+  background-color: var(--primario-700);
+  box-shadow: 0 0.3125rem 0.9375rem rgba(var(--sombras-900), 0.2);
+}
+
+.login.dark-mode .login__title {
+  color: var(--neutral-textos-200);
+}
+
+.login.dark-mode .form-label {
+  color: var(--neutral-textos-400);
+}
+
+.login.dark-mode .form-input {
+  background-color: var(--primario-600);
+  border-color: var(--neutral-textos-500);
+  color: var(--neutral-textos-200);
+}
+
+.login.dark-mode .form-input:invalid {
+  border-color: var(--errors-500);
+}
+
+.login.dark-mode .error-message {
+  color: var(--errors-500);
+}
+
+.login.dark-mode .btn--submit {
+  background-color: var(--botones-900);
+  color: var(--neutral-textos-100);
+}
+
+.login.dark-mode .btn--submit:hover {
+  background-color: var(--botones-600);
+}
+
+.login.dark-mode .login__links p {
+  color: var(--neutral-textos-400);
+}
+
+.login.dark-mode .login__links a {
+  color: var(--botones-300);
 }
 
 /* Media Queries para pantallas pequeñas */

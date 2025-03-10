@@ -1,5 +1,5 @@
 <template>
-  <header class="header">
+  <header class="header" :class="{ 'dark-mode': isDarkMode }">
     <div class="container">
       <div class="header__content">
         <div class="logo">
@@ -16,8 +16,8 @@
           </ul>
         </nav>
         <div class="header__actions">
-          <div class="theme-toggle">
-            <input type="checkbox" id="theme-switch" />
+          <div class="theme-toggle" :class="{ 'dark-mode': isDarkMode }">
+            <input type="checkbox" id="theme-switch" @change="toggleTheme" />
             <label for="theme-switch" class="theme-toggle__label"></label>
           </div>
           <div class="auth-buttons">
@@ -50,6 +50,7 @@
 
 <script>
 import { useAuthStore } from '../stores/authStore';
+import { useThemeStore } from '../stores/themeStore';
 
 export default {
   name: 'Header',
@@ -59,12 +60,21 @@ export default {
     },
     userId() {
       return useAuthStore().getUserId;
+    },
+    isDarkMode() {
+      return useThemeStore().isDarkMode;
     }
   },
   methods: {
     logout() {
       useAuthStore().logout();
+    },
+    toggleTheme() {
+      useThemeStore().toggleTheme();
     }
+  },
+  mounted() {
+    useThemeStore().loadThemePreference();
   }
 }
 </script>
@@ -78,6 +88,16 @@ export default {
   top: 0;
   z-index: 100;
   width: 100%;
+}
+
+/* Clase específica para modo oscuro */
+.header.dark-mode {
+  background-color: var(--neutral-textos-800);
+  box-shadow: 0 0.125rem 0.3125rem rgba(var(--sombras-100), 0.3);
+}
+
+.header.dark-mode * {
+  color: var(--neutral-textos-50);
 }
 
 .container {
@@ -161,8 +181,12 @@ export default {
   display: none;
 }
 
-.theme-toggle input:checked+.theme-toggle__label {
-  background-color: var(--primario-500);
+.theme-toggle.dark-mode input:checked+.theme-toggle__label {
+  background-color: var(--primario-50);
+}
+
+.theme-toggle.dark-mode input:checked+.theme-toggle__label::after {
+  background-color: var(--primario-600);
 }
 
 .theme-toggle input:checked+.theme-toggle__label::after {
