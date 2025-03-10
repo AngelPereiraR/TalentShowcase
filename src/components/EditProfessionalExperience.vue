@@ -1,8 +1,8 @@
 <template>
-  <div class="edit-section">
+  <div class="edit-section" :class="{ 'dark-mode': isDarkMode }">
     <h2 class="section-title">Editar Experiencia Profesional</h2>
 
-    <form class="form">
+    <form class="form" @submit.prevent="handleSubmit">
       <div v-for="(experience, index) in form.experiences" :key="index" class="experience-item">
         <div class="form-group">
           <label :for="'company-' + index" class="form-label">Empresa</label>
@@ -24,7 +24,9 @@
           <input :id="'end-date-' + index" type="text" class="form-input" v-model="experience.endDate" />
         </div>
 
-        <button type="button" class="edit-btn" @click="editExperience(index)">Editar</button>
+        <div class="experience-actions">
+          <button type="button" class="delete-btn" @click="deleteExperience(index)">Eliminar</button>
+        </div>
       </div>
 
       <div class="add-experience">
@@ -57,29 +59,67 @@
 </template>
 
 <script>
+import { useThemeStore } from '../stores/themeStore';
+import { useProfileStore } from '../stores/profileStore';
+import { useAuthStore } from '../stores/authStore';
+import { useRoute } from 'vue-router';
+import Spinner from '../components/Spinner.vue';
+import axios from 'axios';
+
 export default {
   name: 'EditProfessionalExperience',
+  components: {
+    Spinner
+  },
+  computed: {
+    isDarkMode() {
+      return useThemeStore().isDarkMode;
+    }
+  },
   data() {
     return {
       form: {
-        experiences: [
-          {
-            company: '',
-            position: '',
-            startDate: '',
-            endDate: ''
-          }
-        ]
+        experiences: []
       },
       newExperience: {
         company: '',
         position: '',
         startDate: '',
         endDate: ''
+      },
+      isLoading: false,
+      profileStore: useProfileStore(),
+      authStore: useAuthStore(),
+      route: useRoute(),
+      errors: {
+        company: null,
+        position: null,
+        startDate: null,
+        endDate: null
       }
     };
   },
+  mounted() {
+    this.loadExperiences();
+  },
   methods: {
+    async loadExperiences() {
+      this.isLoading = true;
+      try {
+        const profileResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}api/profiles/user/${this.route.params.id}`, {
+          headers: {
+            'Authorization': `Bearer ${this.authStore.token}`
+          }
+        });
+        const profileData = profileResponse.data;
+        this.profileStore.setProfile(profileData);
+        this.form.experiences = profileData.professional_experience || [];
+      } catch (error) {
+        console.error('Error al cargar las experiencias:', error);
+      } finally {
+        this.isLoading = false;
+      }
+    },
     addExperience() {
       if (this.newExperience.company && this.newExperience.position &&
         this.newExperience.startDate && this.newExperience.endDate) {
@@ -92,14 +132,26 @@ export default {
         };
       }
     },
-    editExperience(index) {
-      // Implementar la lógica de edición
+    deleteExperience(index) {
+      this.form.experiences.splice(index, 1);
+    },
+    handleSubmit() {
+      // Guardar los cambios en el profileStore
+      this.profileStore.setProfessionalExperience(this.form.experiences);
+      alert('Cambios guardados correctamente');
     }
   }
 };
 </script>
 
 <style scoped>
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
 .edit-section {
   padding: 2rem;
 }
@@ -142,7 +194,7 @@ export default {
 
 .file-upload {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 1rem;
 }
 
@@ -155,12 +207,15 @@ export default {
   cursor: pointer;
 }
 
-.file-name {
-  color: var(--neutral-textos-500);
+.preview-image {
+  max-width: 200px;
+  border-radius: 0.25rem;
 }
 
-.file-input {
-  display: none;
+.error-message {
+  color: var(--error-color);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
 }
 
 .social-media-input {
@@ -176,13 +231,22 @@ select,
   border-radius: 0.25rem;
 }
 
-.add-btn {
+.add-btn,
+.cancel-btn {
   padding: 0.5rem 1rem;
-  background-color: var(--botones-400);
-  color: white;
   border: none;
   border-radius: 0.25rem;
   cursor: pointer;
+}
+
+.add-btn {
+  background-color: var(--botones-400);
+  color: white;
+}
+
+.cancel-btn {
+  background-color: var(--neutral-textos-500);
+  color: white;
 }
 
 .social-media-list {
@@ -208,6 +272,10 @@ select,
   cursor: pointer;
 }
 
+.form-actions {
+  margin-top: 1.5rem;
+}
+
 .submit-btn {
   padding: 0.75rem;
   background-color: var(--botones-400);
@@ -218,7 +286,40 @@ select,
   width: fit-content;
 }
 
+.experience-item {
+  border: 1px solid var(--neutral-textos-200);
+  border-radius: 0.25rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.experience-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.delete-btn {
+  padding: 0.25rem 0.5rem;
+  background-color: var(--neutral-textos-500);
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.add-experience {
+  border: 1px dashed var(--neutral-textos-300);
+  border-radius: 0.25rem;
+  padding: 1rem;
+}
+
 /* Modo oscuro */
+.edit-section.dark-mode {
+  background-color: var(--primario-900);
+  color: var(--neutral-textos-200);
+}
+
 .edit-section.dark-mode .section-title {
   color: var(--neutral-textos-200);
 }
@@ -234,18 +335,30 @@ select,
   color: var(--neutral-textos-200);
 }
 
-.edit-section.dark-mode .file-name {
-  color: var(--neutral-textos-400);
+.edit-section.dark-mode .error-message {
+  color: var(--error-color-dark);
 }
 
-.edit-section.dark-mode .file-upload-btn,
 .edit-section.dark-mode .add-btn,
+.edit-section.dark-mode .cancel-btn,
 .edit-section.dark-mode .edit-btn,
 .edit-section.dark-mode .submit-btn {
   background-color: var(--botones-300);
 }
 
 .edit-section.dark-mode .social-item {
+  border-color: var(--neutral-textos-600);
+}
+
+.edit-section.dark-mode .experience-item {
+  border-color: var(--neutral-textos-600);
+}
+
+.edit-section.dark-mode .delete-btn {
+  background-color: var(--neutral-textos-600);
+}
+
+.edit-section.dark-mode .add-experience {
   border-color: var(--neutral-textos-600);
 }
 
@@ -274,6 +387,7 @@ select,
   }
 
   .add-btn,
+  .cancel-btn,
   .edit-btn,
   .submit-btn {
     padding: 0.4rem 0.8rem;
@@ -305,10 +419,23 @@ select,
     font-size: 0.8rem;
   }
 
+  .social-media-input {
+    flex-direction: column;
+  }
+
+  select,
+  .social-media-input input,
   .add-btn,
+  .cancel-btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .add-btn,
+  .cancel-btn,
   .edit-btn,
   .submit-btn {
-    padding: 0.3rem 0.6rem;
+    padding: 0.5rem;
     font-size: 0.8rem;
   }
 }

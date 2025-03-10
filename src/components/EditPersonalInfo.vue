@@ -1,5 +1,5 @@
 <template>
-  <div class="edit-section">
+  <div class="edit-section" :class="{ 'dark-mode': isDarkMode }">
     <h2 class="section-title">Editar Información Personal</h2>
 
     <form class="form" @submit.prevent="handleSubmit">
@@ -9,23 +9,28 @@
       <div v-else>
         <div class="form-group">
           <label for="fullname" class="form-label">Nombre Completo</label>
-          <input type="text" id="fullname" class="form-input" v-model="form.fullname" />
+          <input type="text" id="fullname" class="form-input" v-model="form.fullname" @blur="validateFullname" />
+          <div v-if="errors.fullname" class="error-message">{{ errors.fullname }}</div>
+          <div v-if="errors.slug" class="error-message">{{ errors.slug }}</div>
         </div>
 
         <div class="form-group">
           <label for="title" class="form-label">Título Profesional</label>
-          <input type="text" id="title" class="form-input" v-model="form.title" />
+          <input type="text" id="title" class="form-input" v-model="form.title" @blur="validateTitle" />
+          <div v-if="errors.title" class="error-message">{{ errors.title }}</div>
         </div>
 
         <div class="form-group">
           <label for="description" class="form-label">Descripción</label>
-          <textarea id="description" class="form-textarea" v-model="form.description"></textarea>
+          <textarea id="description" class="form-textarea" v-model="form.description"
+            @blur="validateDescription"></textarea>
+          <div v-if="errors.description" class="error-message">{{ errors.description }}</div>
         </div>
 
         <div class="form-group">
           <label for="profile-photo" class="form-label">Foto de Perfil</label>
           <div class="file-upload">
-            <img v-if="fileName" :src="fileName" :alt="form.fullname"></img>
+            <img v-if="fileName" :src="fileName" :alt="form.fullname" class="preview-image" />
             <input type="file" id="profile-photo" class="file-upload-btn" @change="handleFileUpload" accept="image/*" />
           </div>
           <div v-if="fileError" class="error-message">{{ fileError }}</div>
@@ -36,14 +41,17 @@
           <div class="social-media-input">
             <select id="social-media-select" v-model="form.socialMedia.platform">
               <option value="">Selecciona una red social</option>
-              <option value="twitter">Twitter</option>
-              <option value="facebook">Facebook</option>
-              <option value="instagram">Instagram</option>
-              <option value="linkedin">LinkedIn</option>
+              <option value="Twitter">Twitter</option>
+              <option value="Facebook">Facebook</option>
+              <option value="Instagram">Instagram</option>
+              <option value="LinkedIn">LinkedIn</option>
             </select>
             <input type="text" v-model="form.socialMedia.url" placeholder="Url de la red social" />
             <button class="add-btn" @click.prevent="addSocialMedia">
               {{ isEditingSocialMedia ? 'Modificar' : 'Añadir' }}
+            </button>
+            <button v-if="isEditingSocialMedia" class="cancel-btn" @click.prevent="cancelEditSocialMedia">
+              Cancelar
             </button>
           </div>
           <div class="social-media-list">
@@ -54,13 +62,16 @@
           </div>
         </div>
 
-        <button type="submit" class="submit-btn">Guardar cambios</button>
+        <div class="form-actions">
+          <button type="submit" class="submit-btn">Guardar cambios</button>
+        </div>
       </div>
     </form>
   </div>
 </template>
 
 <script>
+import { useThemeStore } from '../stores/themeStore';
 import { useProfileStore } from '../stores/profileStore';
 import { useAuthStore } from '../stores/authStore';
 import { useRoute } from 'vue-router';
@@ -71,6 +82,11 @@ export default {
   name: 'EditPersonalInfo',
   components: {
     Spinner
+  },
+  computed: {
+    isDarkMode() {
+      return useThemeStore().isDarkMode;
+    }
   },
   data() {
     return {
@@ -89,11 +105,18 @@ export default {
       fileError: '',
       isEditingSocialMedia: false,
       editingSocialMediaIndex: -1,
+      originalSocialMedia: null,
       slug: '',
       isLoading: false,
       profileStore: useProfileStore(),
       authStore: useAuthStore(),
-      route: useRoute()
+      route: useRoute(),
+      errors: {
+        fullname: null,
+        title: null,
+        description: null,
+        slug: null
+      }
     };
   },
   mounted() {
@@ -103,7 +126,6 @@ export default {
     async loadProfileData() {
       this.isLoading = true;
       try {
-        // Primera petición para obtener el perfil
         const profileResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}api/profiles/user/${this.route.params.id}`, {
           headers: {
             'Authorization': `Bearer ${this.authStore.token}`
@@ -111,15 +133,12 @@ export default {
         });
         const profileData = profileResponse.data;
         this.profileStore.setProfile(profileData);
-
-
       } catch (error) {
         console.error('Error al cargar los datos:', error);
-        this.profileStore.setProfile(null)
+        this.profileStore.setProfile(null);
       }
 
       try {
-        // Segunda petición para obtener las redes sociales
         const socialResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}api/social-networks/profile/${this.profileStore.profile.id}`, {
           headers: {
             'Authorization': `Bearer ${this.authStore.token}`
@@ -151,9 +170,31 @@ export default {
         this.form.photo = null;
       }
     },
+    validateFullname() {
+      if (!this.form.fullname) {
+        this.errors.fullname = 'El nombre completo es obligatorio';
+        this.errors.slug = null
+      } else {
+        this.errors.fullname = null;
+        this.errors.slug = null
+      }
+    },
+    validateTitle() {
+      if (!this.form.title) {
+        this.errors.title = 'El título profesional es obligatorio';
+      } else {
+        this.errors.title = null;
+      }
+    },
+    validateDescription() {
+      if (!this.form.description) {
+        this.errors.description = 'La descripción es obligatoria';
+      } else {
+        this.errors.description = null;
+      }
+    },
     addSocialMedia() {
       if (this.isEditingSocialMedia && this.editingSocialMediaIndex !== -1) {
-        // Si estamos editando, actualizamos la red social existente
         this.form.socialMediaList[this.editingSocialMediaIndex] = {
           platform: this.form.socialMedia.platform,
           url: this.form.socialMedia.url
@@ -163,7 +204,6 @@ export default {
         this.form.socialMedia.platform = '';
         this.form.socialMedia.url = '';
       } else {
-        // Si no estamos editando, añadimos una nueva red social
         if (this.form.socialMedia.platform && this.form.socialMedia.url) {
           this.form.socialMediaList.push({
             platform: this.form.socialMedia.platform,
@@ -176,30 +216,54 @@ export default {
     },
     editSocialMedia(index) {
       const social = this.form.socialMediaList[index];
+      this.originalSocialMedia = { ...social };
       this.form.socialMedia.platform = social.platform;
       this.form.socialMedia.url = social.url;
       this.isEditingSocialMedia = true;
       this.editingSocialMediaIndex = index;
     },
+    cancelEditSocialMedia() {
+      if (this.originalSocialMedia) {
+        this.form.socialMedia.platform = this.originalSocialMedia.platform;
+        this.form.socialMedia.url = this.originalSocialMedia.url;
+      } else {
+        this.form.socialMedia.platform = '';
+        this.form.socialMedia.url = '';
+      }
+      this.isEditingSocialMedia = false;
+      this.editingSocialMediaIndex = -1;
+      this.originalSocialMedia = null;
+    },
     async handleSubmit(event) {
+      this.validateFullname();
+      this.validateTitle();
+      this.validateDescription();
+
+      if (
+        this.errors.fullname ||
+        this.errors.title ||
+        this.errors.description || this.errors.slug
+      ) {
+        return;
+      }
+
       try {
         this.isLoading = true;
         const profileId = this.profileStore.profile?.id;
         const socialNetworks = this.profileStore.socialNetworks;
 
-        // Preparar datos del perfil
         const profileData = new FormData();
         profileData.append('user_id', this.route.params.id);
         profileData.append('full_name', this.form.fullname);
         profileData.append('title', this.form.title);
         profileData.append('description', this.form.description);
-        profileData.append('photo', this.form.photo);
+        if (this.form.photo) {
+          profileData.append('photo', this.form.photo);
+        }
         profileData.append('slug', this.slug);
 
-        // Guardar perfil
         let profileResponse;
         if (profileId) {
-          // Actualizar perfil existente
           profileResponse = await axios.post(
             `${import.meta.env.VITE_BACKEND_URL}api/profiles/${profileId}`,
             profileData,
@@ -211,7 +275,6 @@ export default {
             }
           );
         } else {
-          // Crear nuevo perfil
           profileResponse = await axios.post(
             `${import.meta.env.VITE_BACKEND_URL}api/profiles`,
             profileData,
@@ -230,7 +293,7 @@ export default {
                 'Authorization': `Bearer ${this.authStore.token}`
               }
             }
-          )
+          );
         }
 
         if (!profileResponse.data) {
@@ -238,10 +301,8 @@ export default {
         }
 
         const updatedProfile = profileResponse.data;
-        console.log(updatedProfile);
         const newSocialNetworks = [];
 
-        // Procesar redes sociales una por una
         if (socialNetworks && socialNetworks.length > 0) {
           for (const social of socialNetworks) {
             await axios.delete(
@@ -288,6 +349,13 @@ export default {
         console.log('Cambios guardados correctamente');
       } catch (error) {
         console.error('Error al guardar los cambios:', error);
+        // Manejo específico del error de slug
+        if (error.response && error.response.data.errors.slug !== null) {
+          this.errors.slug = 'El Nombre ya ha sido escogido por otro usuario';
+        } else {
+          // Otros errores
+          this.errors.general = 'Ha ocurrido un error al guardar los cambios';
+        }
       } finally {
         this.isLoading = false;
       }
@@ -388,12 +456,15 @@ export default {
   cursor: pointer;
 }
 
-.file-name {
-  color: var(--neutral-textos-500);
+.preview-image {
+  max-width: 200px;
+  border-radius: 0.25rem;
 }
 
-.file-input {
-  display: none;
+.error-message {
+  color: var(--error-color);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
 }
 
 .social-media-input {
@@ -409,13 +480,22 @@ select,
   border-radius: 0.25rem;
 }
 
-.add-btn {
+.add-btn,
+.cancel-btn {
   padding: 0.5rem 1rem;
-  background-color: var(--botones-400);
-  color: white;
   border: none;
   border-radius: 0.25rem;
   cursor: pointer;
+}
+
+.add-btn {
+  background-color: var(--botones-400);
+  color: white;
+}
+
+.cancel-btn {
+  background-color: var(--neutral-textos-500);
+  color: white;
 }
 
 .social-media-list {
@@ -441,6 +521,10 @@ select,
   cursor: pointer;
 }
 
+.form-actions {
+  margin-top: 1.5rem;
+}
+
 .submit-btn {
   padding: 0.75rem;
   background-color: var(--botones-400);
@@ -452,6 +536,11 @@ select,
 }
 
 /* Modo oscuro */
+.edit-section.dark-mode {
+  background-color: var(--primario-900);
+  color: var(--neutral-textos-200);
+}
+
 .edit-section.dark-mode .section-title {
   color: var(--neutral-textos-200);
 }
@@ -467,12 +556,12 @@ select,
   color: var(--neutral-textos-200);
 }
 
-.edit-section.dark-mode .file-name {
-  color: var(--neutral-textos-400);
+.edit-section.dark-mode .error-message {
+  color: var(--error-color-dark);
 }
 
-.edit-section.dark-mode .file-upload-btn,
 .edit-section.dark-mode .add-btn,
+.edit-section.dark-mode .cancel-btn,
 .edit-section.dark-mode .edit-btn,
 .edit-section.dark-mode .submit-btn {
   background-color: var(--botones-300);
@@ -507,6 +596,7 @@ select,
   }
 
   .add-btn,
+  .cancel-btn,
   .edit-btn,
   .submit-btn {
     padding: 0.4rem 0.8rem;
@@ -543,18 +633,15 @@ select,
   }
 
   select,
-  .social-media-input input {
+  .social-media-input input,
+  .add-btn,
+  .cancel-btn {
     width: 100%;
     margin-bottom: 0.5rem;
   }
 
-  .add-btn {
-    width: 100%;
-    padding: 0.5rem;
-    font-size: 0.8rem;
-  }
-
   .add-btn,
+  .cancel-btn,
   .edit-btn,
   .submit-btn {
     padding: 0.5rem;

@@ -86,6 +86,13 @@ export default {
 </script>
 
 <style scoped>
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
 .edit-section {
   padding: 2rem;
 }
@@ -128,7 +135,7 @@ export default {
 
 .file-upload {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 1rem;
 }
 
@@ -141,12 +148,15 @@ export default {
   cursor: pointer;
 }
 
-.file-name {
-  color: var(--neutral-textos-500);
+.preview-image {
+  max-width: 200px;
+  border-radius: 0.25rem;
 }
 
-.file-input {
-  display: none;
+.error-message {
+  color: var(--error-color);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
 }
 
 .social-media-input {
@@ -162,13 +172,22 @@ select,
   border-radius: 0.25rem;
 }
 
-.add-btn {
+.add-btn,
+.cancel-btn {
   padding: 0.5rem 1rem;
-  background-color: var(--botones-400);
-  color: white;
   border: none;
   border-radius: 0.25rem;
   cursor: pointer;
+}
+
+.add-btn {
+  background-color: var(--botones-400);
+  color: white;
+}
+
+.cancel-btn {
+  background-color: var(--neutral-textos-500);
+  color: white;
 }
 
 .social-media-list {
@@ -194,6 +213,10 @@ select,
   cursor: pointer;
 }
 
+.form-actions {
+  margin-top: 1.5rem;
+}
+
 .submit-btn {
   padding: 0.75rem;
   background-color: var(--botones-400);
@@ -205,6 +228,11 @@ select,
 }
 
 /* Modo oscuro */
+.edit-section.dark-mode {
+  background-color: var(--primario-900);
+  color: var(--neutral-textos-200);
+}
+
 .edit-section.dark-mode .section-title {
   color: var(--neutral-textos-200);
 }
@@ -220,12 +248,12 @@ select,
   color: var(--neutral-textos-200);
 }
 
-.edit-section.dark-mode .file-name {
-  color: var(--neutral-textos-400);
+.edit-section.dark-mode .error-message {
+  color: var(--error-color-dark);
 }
 
-.edit-section.dark-mode .file-upload-btn,
 .edit-section.dark-mode .add-btn,
+.edit-section.dark-mode .cancel-btn,
 .edit-section.dark-mode .edit-btn,
 .edit-section.dark-mode .submit-btn {
   background-color: var(--botones-300);
@@ -260,6 +288,7 @@ select,
   }
 
   .add-btn,
+  .cancel-btn,
   .edit-btn,
   .submit-btn {
     padding: 0.4rem 0.8rem;
@@ -291,10 +320,23 @@ select,
     font-size: 0.8rem;
   }
 
+  .social-media-input {
+    flex-direction: column;
+  }
+
+  select,
+  .social-media-input input,
   .add-btn,
+  .cancel-btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .add-btn,
+  .cancel-btn,
   .edit-btn,
   .submit-btn {
-    padding: 0.3rem 0.6rem;
+    padding: 0.5rem;
     font-size: 0.8rem;
   }
 }

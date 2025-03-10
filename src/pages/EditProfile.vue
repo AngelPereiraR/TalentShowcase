@@ -1,5 +1,5 @@
 <template>
-  <div class="edit-profile">
+  <div class="edit-profile" :class="{ 'dark-mode': isDarkMode }">
     <div class="container">
       <div class="tabs-container">
         <ul class="tabs">
@@ -29,9 +29,9 @@
         <EditFeaturedProjects v-if="activeTab === 'projects'" />
       </div>
 
-      <button class="back-to-profile" @click="goBackToProfile">
+      <router-link :to="{ name: 'Profile', params: { id: idUser } }" class="back-to-profile" @click="goBackToProfile">
         Volver al perfil
-      </button>
+      </router-link>
     </div>
   </div>
 </template>
@@ -53,15 +53,18 @@ export default {
     EditSkills,
     EditFeaturedProjects
   },
+  computed: {
+    idUser() {
+      return this.$route.params.id;
+    },
+    isDarkMode() {
+      return useThemeStore().isDarkMode;
+    }
+  },
   data() {
     return {
       activeTab: 'personal'
     };
-  },
-  computed: {
-    isDarkMode() {
-      return useThemeStore().isDarkMode;
-    }
   },
   methods: {
     goBackToProfile() {
@@ -74,6 +77,7 @@ export default {
 <style scoped>
 .edit-profile {
   padding: 16rem 0 10rem;
+  background-color: var(--neutral-textos-50);
 }
 
 .container {
@@ -100,10 +104,12 @@ export default {
   cursor: pointer;
   text-align: center;
   transition: all 0.3s ease;
+  color: var(--neutral-textos-700);
 }
 
 .tab.active {
   border-bottom: 2px solid var(--primario-500);
+  color: var(--primario-500);
 }
 
 .tab-text {
@@ -120,7 +126,8 @@ export default {
 }
 
 .back-to-profile {
-  display: block;
+  display: flex;
+  justify-content: center;
   width: 100%;
   max-width: 800px;
   margin: 2rem auto 0;
@@ -132,6 +139,7 @@ export default {
   cursor: pointer;
   font-size: 1rem;
   transition: background-color 0.3s;
+  text-decoration: none;
 }
 
 .back-to-profile:hover {
@@ -139,12 +147,21 @@ export default {
 }
 
 /* Modo oscuro */
+.edit-profile.dark-mode {
+  background-color: var(--primario-900);
+}
+
 .edit-profile.dark-mode .tabs {
   border-bottom-color: var(--primario-700);
 }
 
+.edit-profile.dark-mode .tab {
+  color: var(--neutral-textos-400);
+}
+
 .edit-profile.dark-mode .tab.active {
   border-bottom-color: var(--botones-300);
+  color: var(--botones-300);
 }
 
 .edit-profile.dark-mode .tab-content {
