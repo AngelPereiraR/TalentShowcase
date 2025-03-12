@@ -4,7 +4,6 @@
       <div class="container">
         <h2 class="hero__title">Muestra tu talento al mundo</h2>
         <p class="hero__subtitle">Crea tu portafolio en línea de manera fácil y personalizada</p>
-        <button class="btn--portfolio">Crear portafolio</button>
       </div>
     </section>
 
@@ -85,21 +84,6 @@ export default {
   margin-bottom: 1.875rem;
 }
 
-.btn--portfolio {
-  background-color: var(--botones-300);
-  color: var(--neutral-textos-900);
-  border: none;
-  padding: 0.75rem 1.875rem;
-  font-size: 1rem;
-  border-radius: 1.875rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.btn--portfolio:hover {
-  background-color: var(--botones-400);
-}
-
 .about {
   padding: 7.5rem 0;
   text-align: center;
@@ -170,12 +154,6 @@ export default {
 
   .hero__subtitle {
     font-size: var(--font-size-text-normal);
-  }
-
-  .btn--portfolio {
-    padding: 0.625rem 1.5rem;
-    font-size: 0.875rem;
-    border-radius: 1.5rem;
   }
 
   .about {

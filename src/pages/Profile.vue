@@ -50,14 +50,11 @@
               <i class="fas fa-user-circle avatar-icon" v-else></i>
             </div>
             <div class="profile-actions">
-              <router-link :to="{ name: 'EditProfile', params: { id: user?.id } }" class="action-item">
+              <router-link v-if="isOwnProfile" :to="{ name: 'EditProfile', params: { id: user?.id } }"
+                class="action-item">
                 <i class="fas fa-id-card"></i>
                 <span class="action-text">Editar Datos del perfil</span>
               </router-link>
-              <div class="action-item">
-                <i class="fas fa-folder-plus"></i>
-                <span class="action-text">Editar Portafolio</span>
-              </div>
             </div>
           </div>
         </div>
@@ -88,6 +85,7 @@
 
 <script>
 import { useAuthStore } from '../stores/authStore';
+import { useRoute } from 'vue-router';
 import axios from 'axios';
 import Spinner from '../components/Spinner.vue';
 
@@ -105,29 +103,50 @@ export default {
       error: null
     }
   },
-  async created() {
-    try {
+  computed: {
+    isOwnProfile() {
       const authStore = useAuthStore();
-      const userId = authStore.user.id;
-
-      // Obtener usuario
-      const userResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}api/users/${userId}`);
-      this.user = userResponse.data.user;
-
-      // Obtener perfil
-      const profileResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}api/profiles/user/${userId}`);
-      this.profile = profileResponse.data;
-
-      // Obtener redes sociales
-      if (this.profile) {
-        const socialResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}api/social-networks/profile/${this.profile.id}`);
-        this.socialNetworks = socialResponse.data;
+      const route = useRoute();
+      return authStore.getUserId === parseInt(route.params.id);
+    }
+  },
+  async created() {
+    await this.fetchInfo()
+  },
+  watch: {
+    '$route.params.id': {
+      handler: function (newId, oldId) {
+        if (newId !== oldId) {
+          this.fetchInfo()
+        }
       }
-    } catch (error) {
-      this.error = 'Error al cargar los datos del perfil';
-      console.error(error);
-    } finally {
-      this.loading = false;
+    }
+  },
+  methods: {
+    async fetchInfo() {
+      try {
+        const route = useRoute();
+        const userId = route.params.id;
+
+        // Obtener usuario
+        const userResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}api/users/${userId}`);
+        this.user = userResponse.data.user;
+
+        // Obtener perfil
+        const profileResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}api/profiles/user/${userId}`);
+        this.profile = profileResponse.data;
+
+        // Obtener redes sociales
+        if (this.profile) {
+          const socialResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}api/social-networks/profile/${this.profile.id}`);
+          this.socialNetworks = socialResponse.data;
+        }
+      } catch (error) {
+        this.error = 'Error al cargar los datos del perfil';
+        console.error(error);
+      } finally {
+        this.loading = false;
+      }
     }
   }
 }

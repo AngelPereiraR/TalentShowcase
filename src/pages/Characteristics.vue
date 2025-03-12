@@ -17,13 +17,41 @@
             </div>
             <h4 class="feature-title">Gestión de Usuarios</h4>
             <p class="feature-description">
-              Crea y personaliza tu perfil, añade redes sociales, idiomas y
+              Crea y personaliza tu perfil, añade redes sociales y
               habilidades.
             </p>
           </div>
 
-          <!-- Resto de feature-cards con la misma clase condicional -->
+          <div class="feature-card" :class="{ 'dark-mode': isDarkMode }">
+            <div class="feature-icon">
+              <i class="fas fa-pen"></i>
+            </div>
+            <h4 class="feature-title">Personalización Completa</h4>
+            <p class="feature-description">
+              Personaliza secciones, colores, servicios y contenido de tu
+              portafolio.
+            </p>
+          </div>
 
+          <div class="feature-card" :class="{ 'dark-mode': isDarkMode }">
+            <div class="feature-icon">
+              <i class="fas fa-box"></i>
+            </div>
+            <h4 class="feature-title">Gestión de Archivos</h4>
+            <p class="feature-description">
+              Sube imágenes fácilmente con integración de Cloudinary.
+            </p>
+          </div>
+
+          <div class="feature-card" :class="{ 'dark-mode': isDarkMode }">
+            <div class="feature-icon">
+              <i class="fas fa-shield-alt"></i>
+            </div>
+            <h4 class="feature-title">Seguridad y Privacidad</h4>
+            <p class="feature-description">
+              Protección de datos y autenticación segura con JSON Web Tokens (JWT).
+            </p>
+          </div>
         </div>
       </div>
     </section>
@@ -38,9 +66,6 @@
               Tu portafolio será accesible para todo el público mediante un enlace único.
             </p>
           </div>
-
-          <!-- Resto de detail-cards con la misma clase condicional -->
-
         </div>
       </div>
     </section>

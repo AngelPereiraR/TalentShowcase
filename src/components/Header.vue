@@ -10,8 +10,6 @@
           <ul>
             <li><router-link :to="{ name: 'Home' }">Inicio</router-link></li>
             <li><router-link :to="{ name: 'Characteristics' }">Características</router-link></li>
-            <li v-if="isAuthenticated"><router-link
-                :to="{ name: 'Portfolio', params: { id: 1 } }">Portafolio</router-link></li>
             <li><router-link :to="{ name: 'Contact' }">Contacto</router-link></li>
           </ul>
         </nav>
