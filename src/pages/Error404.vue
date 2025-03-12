@@ -1,8 +1,8 @@
 <template>
-  <div class="not-found-container">
+  <div class="not-found-container" :class="{ 'dark-mode': isDarkMode }">
     <div class="not-found-content">
-      <h1 class="error-code" :class="{ bounce: animate }">404</h1>
-      <h2 class="error-message">Página no encontrada</h2>
+      <h1 class="error-code" :class="{ bounce: animate, 'dark-mode': isDarkMode }">404</h1>
+      <h2 class="error-message" :class="{ 'dark-mode': isDarkMode }">Página no encontrada</h2>
       <button class="back-button" @click="goBackHome">
         Volver al inicio
       </button>
@@ -11,6 +11,8 @@
 </template>
 
 <script>
+import { useThemeStore } from '../stores/themeStore';
+
 export default {
   name: "NotFound",
   data() {
@@ -18,13 +20,16 @@ export default {
       animate: false
     };
   },
+  computed: {
+    isDarkMode() {
+      return useThemeStore().isDarkMode;
+    }
+  },
   mounted() {
-    // Iniciar la animación después de que el componente esté montado
     this.startAnimation();
   },
   methods: {
     startAnimation() {
-      // Activar la animación
       this.animate = true;
     },
     goBackHome() {
@@ -40,8 +45,12 @@ export default {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #ffffff;
   padding: 2rem;
+  background-color: var(--neutral-textos-100);
+}
+
+.not-found-container.dark-mode {
+  background-color: var(--primario-900);
 }
 
 .not-found-content {
@@ -50,32 +59,52 @@ export default {
 }
 
 .error-code {
-  font-size: 8rem;
-  font-weight: bold;
-  color: #3498db;
+  font-family: var(--font-family-title);
+  font-size: var(--font-size-title-desktop);
+  font-weight: var(--font-weight-title);
+  color: var(--primario-400);
   margin-bottom: 1rem;
   animation: bounce 2s infinite;
 }
 
+.error-code.dark-mode {
+  color: var(--hover-300);
+}
+
 .error-message {
-  font-size: 1.5rem;
-  color: #333;
+  font-family: var(--font-family-subtitle);
+  font-size: var(--font-size-subtitle-desktop);
+  font-weight: var(--font-weight-subtitle);
+  color: var(--neutral-textos-800);
   margin-bottom: 2rem;
 }
 
+.error-message.dark-mode {
+  color: var(--neutral-textos-200);
+}
+
 .back-button {
-  background-color: #2ecc71;
-  color: white;
+  background-color: var(--botones-400);
+  color: var(--neutral-textos-50);
   border: none;
   padding: 0.8rem 2rem;
   border-radius: 4px;
-  font-size: 1rem;
+  font-family: var(--font-family-text-normal);
+  font-size: var(--font-size-text-normal);
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
+.back-button.dark-mode {
+  background-color: var(--botones-500);
+}
+
 .back-button:hover {
-  background-color: #27ae60;
+  background-color: var(--botones-500);
+}
+
+.back-button.dark-mode:hover {
+  background-color: var(--botones-600);
 }
 
 @keyframes bounce {
@@ -100,16 +129,16 @@ export default {
 /* Estilos para pantallas pequeñas */
 @media (max-width: 768px) {
   .error-code {
-    font-size: 6rem;
+    font-size: var(--font-size-title-mobile);
   }
 
   .error-message {
-    font-size: 1.2rem;
+    font-size: var(--font-size-subtitle-mobile);
   }
 
   .back-button {
     padding: 0.6rem 1.5rem;
-    font-size: 0.9rem;
+    font-size: var(--font-size-text-small-mobile);
   }
 }
 </style>
