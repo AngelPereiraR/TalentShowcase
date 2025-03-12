@@ -85,6 +85,7 @@ import { useAuthStore } from '../stores/authStore';
 import { useRoute } from 'vue-router';
 import Spinner from '../components/Spinner.vue';
 import axios from 'axios';
+import { watch } from 'vue';
 
 export default {
   name: 'EditProfessionalExperience',
@@ -244,6 +245,13 @@ export default {
       this.form.experiences.splice(index, 1);
       this.errors.splice(index, 1);
     },
+    generateSlug() {
+      return this.form.fullname
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9-]/g, '');
+    },
     async handleSubmit() {
       // Validar todas las experiencias existentes
       this.form.experiences.forEach((exp, index) => {
@@ -296,10 +304,11 @@ export default {
         } catch (error) {
           console.error('Error al guardar los cambios:', error);
         } finally {
-          this.isLoading = false;
+          this.loadExperiences()
         }
       }
-    }
+    },
+    watch
   }
 };
 </script>

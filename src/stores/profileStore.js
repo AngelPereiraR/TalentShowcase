@@ -5,7 +5,10 @@ export const useProfileStore = defineStore('profile', {
     user: null,
     profile: null,
     socialNetworks: null,
-    professionalExperience: null
+    professionalExperience: null,
+    education: null,
+    skills: null,
+    projects: null
   }),
   actions: {
     setUser(user) {
@@ -23,5 +26,23 @@ export const useProfileStore = defineStore('profile', {
     addProfessionalExperience(experience) {
       this.professionalExperience.push(experience);
     },
+    setEducation(education) {
+      this.education = education;
+    },
+    addEducation(degree) {
+      this.education.push(degree);
+    },
+    setSkills(skills) {
+      this.skills = skills;
+    },
+    addSkill(skill) {
+      this.skills.push(skill);
+    },
+    setProjects(projects) {
+      this.projects = projects;
+    },
+    addProject(project) {
+      this.projects.push(project);
+    }
   }
 });

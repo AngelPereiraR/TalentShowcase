@@ -1,59 +1,186 @@
 <template>
-  <div class="edit-section">
+  <div class="edit-section" :class="{ 'dark-mode': isDarkMode }">
     <h2 class="section-title">Editar Habilidades</h2>
 
-    <form class="form">
+    <form class="form" @submit.prevent="handleSubmit">
+      <div v-if="isLoading" class="spinner-container">
+        <Spinner />
+      </div>
       <div v-for="(skill, index) in form.skills" :key="index" class="skill-item">
         <div class="form-group">
           <label :for="'skill-' + index" class="form-label">Habilidad</label>
-          <input :id="'skill-' + index" type="text" class="form-input" v-model="skill.name" />
+          <input :id="'skill-' + index" type="text" class="form-input" v-model="skill.skill"
+            @blur="validateSkill(index)" />
+          <div v-if="errors[index]" class="error-message">{{ errors[index] }}</div>
         </div>
 
-        <button type="button" class="edit-btn" @click="editSkill(index)">Editar</button>
+        <div class="skill-actions">
+          <button type="button" class="delete-btn" @click="deleteSkill(index)">Eliminar</button>
+        </div>
       </div>
 
       <div class="add-skill">
         <div class="form-group">
           <label for="new-skill" class="form-label">Habilidad</label>
-          <input type="text" id="new-skill" class="form-input" v-model="newSkill.name" />
+          <input type="text" id="new-skill" class="form-input" v-model="newSkill.skill" @blur="validateNewSkill" />
+          <div v-if="newErrors" class="error-message">{{ newErrors }}</div>
         </div>
 
-        <button type="button" class="add-btn" @click="addSkill">Añadir</button>
+        <button type="button" class="add-btn" @click="addSkill" :disabled="hasNewErrors">Añadir</button>
       </div>
 
-      <button type="submit" class="submit-btn">Guardar cambios</button>
+      <button type="submit" class="submit-btn" :disabled="hasErrors">Guardar cambios</button>
     </form>
   </div>
 </template>
 
 <script>
+import { useThemeStore } from '../stores/themeStore';
+import { useProfileStore } from '../stores/profileStore';
+import { useAuthStore } from '../stores/authStore';
+import { useRoute } from 'vue-router';
+import Spinner from '../components/Spinner.vue';
+import axios from 'axios';
+
 export default {
-  name: 'EditSkills',
+  skill: 'EditSkills',
+  components: {
+    Spinner
+  },
+  computed: {
+    isDarkMode() {
+      return useThemeStore().isDarkMode;
+    },
+    hasErrors() {
+      return this.form.skills.some((skill, index) => {
+        const skillErrors = this.errors[index];
+        return skillErrors;
+      });
+    },
+    hasNewErrors() {
+      return this.newErrors !== null;
+    }
+  },
   data() {
     return {
       form: {
-        skills: [
-          {
-            name: ''
-          }
-        ]
+        skills: []
       },
       newSkill: {
-        name: ''
-      }
+        skill: ''
+      },
+      isLoading: false,
+      profileStore: useProfileStore(),
+      authStore: useAuthStore(),
+      route: useRoute(),
+      errors: [],
+      newErrors: null,
+      existingSkillIds: [] // Nuevo array para guardar los IDs de las habilidades existentes
     };
   },
+  mounted() {
+    this.loadSkills();
+  },
   methods: {
-    addSkill() {
-      if (this.newSkill.name) {
-        this.form.skills.push({ ...this.newSkill });
-        this.newSkill = {
-          name: ''
-        };
+    async loadSkills() {
+      this.isLoading = true;
+      try {
+        const skillsResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}api/skills/profile/${this.profileStore.profile.id}`, {
+          headers: {
+            'Authorization': `Bearer ${this.authStore.token}`
+          }
+        });
+        const skillsData = skillsResponse.data;
+        this.profileStore.setSkills(skillsData);
+        this.form.skills = skillsData || [];
+
+        // Guardar los IDs de las habilidades existentes
+        this.existingSkillIds = skillsData.map(skill => skill.id);
+      } catch (error) {
+        console.error('Error al cargar las habilidades:', error);
+      } finally {
+        this.isLoading = false;
       }
     },
-    editSkill(index) {
-      // Implementar la lógica de edición
+    validateSkill(index) {
+      if (!this.form.skills[index].skill) {
+        this.errors[index] = 'El campo Habilidad es obligatorio';
+      } else {
+        this.errors[index] = null;
+      }
+    },
+    validateNewSkill() {
+      if (!this.newSkill.skill) {
+        this.newErrors = 'El campo Habilidad es obligatorio';
+      } else {
+        this.newErrors = null;
+      }
+    },
+    addSkill() {
+      this.validateNewSkill();
+
+      if (!this.hasNewErrors) {
+        this.form.skills.push({ ...this.newSkill });
+        this.newSkill = {
+          skill: ''
+        };
+        this.newErrors = null;
+      }
+    },
+    deleteSkill(index) {
+      this.form.skills.splice(index, 1);
+      this.errors.splice(index, 1);
+    },
+    async handleSubmit() {
+      console.log("HOla");
+      // Validar todas las habilidades existentes
+      this.form.skills.forEach((skill, index) => {
+        this.validateSkill(index);
+      });
+
+      if (!this.hasErrors) {
+        try {
+          this.isLoading = true;
+          // Eliminar todas las habilidades existentes
+          if (this.existingSkillIds.length > 0) {
+            for (const skillId of this.existingSkillIds) {
+              try {
+                await axios.delete(`${import.meta.env.VITE_BACKEND_URL}api/skills/${skillId}`, {
+                  headers: {
+                    'Authorization': `Bearer ${this.authStore.token}`
+                  }
+                });
+              } catch (error) {
+                console.error('Error al eliminar la habilidad:', error);
+              }
+            }
+          }
+
+          this.profileStore.setSkills([]);
+
+          // Añadir las nuevas habilidades una por una
+          for (const skill of this.form.skills) {
+            try {
+              const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}api/skills`, {
+                profile_id: this.profileStore.profile.id,
+                skill: skill.skill
+              }, {
+                headers: {
+                  'Authorization': `Bearer ${this.authStore.token}`
+                }
+              });
+              // Actualizar el profileStore con la nueva habilidad
+              this.profileStore.addSkill(response.data);
+            } catch (error) {
+              console.error('Error al guardar la habilidad:', error);
+            }
+          }
+        } catch (error) {
+          console.error('Error al guardar los cambios:', error);
+        } finally {
+          this.loadSkills()
+        }
+      }
     }
   }
 };
@@ -201,6 +328,34 @@ select,
   width: fit-content;
 }
 
+.skill-item {
+  border: 1px solid var(--neutral-textos-200);
+  border-radius: 0.25rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.skill-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.delete-btn {
+  padding: 0.25rem 0.5rem;
+  background-color: var(--neutral-textos-500);
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.add-skill {
+  border: 1px dashed var(--neutral-textos-300);
+  border-radius: 0.25rem;
+  padding: 1rem;
+}
+
 /* Modo oscuro */
 .edit-section.dark-mode {
   background-color: var(--primario-900);
@@ -234,6 +389,18 @@ select,
 }
 
 .edit-section.dark-mode .social-item {
+  border-color: var(--neutral-textos-600);
+}
+
+.edit-section.dark-mode .skill-item {
+  border-color: var(--neutral-textos-600);
+}
+
+.edit-section.dark-mode .delete-btn {
+  background-color: var(--neutral-textos-600);
+}
+
+.edit-section.dark-mode .add-skill {
   border-color: var(--neutral-textos-600);
 }
 

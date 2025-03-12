@@ -29,7 +29,8 @@
         <EditFeaturedProjects v-if="activeTab === 'projects'" />
       </div>
 
-      <router-link :to="{ name: 'Profile', params: { id: idUser } }" class="back-to-profile" @click="goBackToProfile">
+      <router-link v-if="user" :to="{ name: 'Profile', params: { id: user.id } }" class="back-to-profile"
+        @click="goBackToProfile">
         Volver al perfil
       </router-link>
     </div>
@@ -38,11 +39,13 @@
 
 <script>
 import { useThemeStore } from '../stores/themeStore';
+import { useRoute } from 'vue-router';
 import EditPersonalInfo from '../components/EditPersonalInfo.vue';
 import EditProfessionalExperience from '../components/EditProfessionalExperience.vue';
 import EditEducation from '../components/EditEducation.vue';
 import EditSkills from '../components/EditSkills.vue';
 import EditFeaturedProjects from '../components/EditFeaturedProjects.vue';
+import axios from 'axios';
 
 export default {
   name: 'EditProfile',
@@ -54,21 +57,42 @@ export default {
     EditFeaturedProjects
   },
   computed: {
-    idUser() {
-      return this.$route.params.id;
-    },
     isDarkMode() {
       return useThemeStore().isDarkMode;
     }
   },
   data() {
     return {
-      activeTab: 'personal'
+      activeTab: 'personal',
+      user: null,
+      loading: true
     };
   },
   methods: {
+    async fetchUser() {
+      this.loading = true;
+      try {
+        const route = useRoute();
+        const userId = route.params.id;
+
+        // Obtener usuario
+        const userResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}api/users/${userId}`);
+        this.user = userResponse.data.user;
+      } catch (error) {
+        console.error('Error al cargar el usuario:', error);
+        this.user = null;
+      } finally {
+        this.loading = false;
+      }
+    },
     goBackToProfile() {
-      this.$router.push({ name: 'Profile' });
+      this.$router.push({ name: 'Profile', params: { id: this.user.id } });
+    }
+  },
+  async created() {
+    await this.fetchUser();
+    if (this.user === null) {
+      this.$router.push({ name: 'NotFound' });
     }
   }
 };

@@ -27,7 +27,6 @@
 
             <div class="login__links">
               <p>¿No tienes cuenta? <router-link :to="{ name: 'Register' }">Regístrate aquí</router-link></p>
-              <p>¿Olvidaste tu contraseña? <a href="#">Recupérala aquí</a></p>
             </div>
           </form>
         </div>
@@ -40,8 +39,9 @@
 
 <script>
 import { useThemeStore } from '../stores/themeStore';
-import Modal from '../components/Modal.vue';
 import { useAuthStore } from '../stores/authStore';
+import { useRouter } from 'vue-router';
+import Modal from '../components/Modal.vue';
 
 export default {
   name: 'Login',
@@ -65,6 +65,16 @@ export default {
       showErrorModal: false,
       errorMessageTitle: '',
       errorMessage: ''
+    }
+  },
+  created() {
+    const authStore = useAuthStore();
+    const router = useRouter();
+
+    // Verificar si el usuario ya está autenticado
+    if (authStore.isAuthenticated) {
+      const userId = authStore.user.id;
+      router.push({ name: 'Profile', params: { id: userId } });
     }
   },
   methods: {
