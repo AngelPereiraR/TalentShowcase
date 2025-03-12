@@ -172,16 +172,6 @@ export default {
       error: null
     }
   },
-  created() {
-    const authStore = useAuthStore();
-    const router = useRouter();
-
-    // Verificar si el usuario ya está autenticado
-    if (authStore.isAuthenticated) {
-      const userId = authStore.user.id;
-      router.push({ name: 'Profile', params: { id: userId } });
-    }
-  },
   computed: {
     isDarkMode() {
       return useThemeStore().isDarkMode;
@@ -197,12 +187,29 @@ export default {
     if (this.user === null) {
       this.$router.push({ name: "NotFound" })
     }
+    const authStore = useAuthStore();
+
+    // Configurar un watcher para detectar cambios en la autenticación
+    this.authStore = authStore;
+    this.unwatchAuth = this.$watch(
+      () => this.authStore.isAuthenticated,
+      (isAuthenticated) => {
+        if (!isAuthenticated) {
+          window.location.reload();
+        }
+      }
+    );
+  },
+  beforeUnmount() {
+    // Limpiar el watcher al desmontar el componente
+    this.unwatchAuth();
   },
   watch: {
     '$route.params.id': {
       handler: function (newId, oldId) {
         if (newId !== oldId) {
-          this.fetchInfo()
+          // Recargar la página al cambiar de usuario
+          window.location.reload();
         }
       }
     }

@@ -39,7 +39,8 @@
 
 <script>
 import { useThemeStore } from '../stores/themeStore';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
+import { useAuthStore } from '../stores/authStore';
 import EditPersonalInfo from '../components/EditPersonalInfo.vue';
 import EditProfessionalExperience from '../components/EditProfessionalExperience.vue';
 import EditEducation from '../components/EditEducation.vue';
@@ -87,11 +88,33 @@ export default {
     },
     goBackToProfile() {
       this.$router.push({ name: 'Profile', params: { id: this.user.id } });
+    },
+    checkUserAuthorization() {
+      const authStore = useAuthStore();
+      const route = useRoute();
+      const router = useRouter();
+
+      // Si no hay usuario autenticado, redirigir al login
+      if (!authStore.isAuthenticated) {
+        router.push({ name: 'Login' });
+        return false;
+      }
+
+      // Si el usuario autenticado no coincide con el ID de la ruta, redirigir a la página de error 404
+      if (authStore.user.id !== parseInt(route.params.id)) {
+        router.push({ name: 'NotFound' });
+        return false;
+      }
+
+      return true;
     }
   },
   async created() {
+    const isAuthorized = this.checkUserAuthorization();
+    if (!isAuthorized) return;
+
     await this.fetchUser();
-    if (this.user === null) {
+    if (!this.user) {
       this.$router.push({ name: 'NotFound' });
     }
   }
