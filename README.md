@@ -63,6 +63,12 @@ src/
 
 5. Accede a la aplicación en tu navegador en `http://localhost:5173`
 
+### Nota Importante sobre el Servidor
+
+**Importante:** El servidor backend utilizado en este proyecto se apaga automáticamente cuando detecta inactividad. Como resultado, la primera vez que intentes acceder a la aplicación o realizar una petición después de un período de inactividad, es posible que experimentes una espera de 1-2 minutos mientras el servidor se reinicia.
+
+**Solución:** Si notas que la aplicación no responde inmediatamente, espera unos minutos y recarga la página (`Ctrl + R` o `Cmd + R`). Esto debería resolver el problema y permitir que las peticiones se realicen correctamente.
+
 ### Compilación para Producción
 
 Para compilar la aplicación para producción:
