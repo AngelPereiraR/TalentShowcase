@@ -30,18 +30,6 @@
             </p>
           </div>
 
-          <!-- Tarjeta de Personalización Completa -->
-          <div class="feature-card" :class="{ 'dark-mode': isDarkMode }">
-            <div class="feature-icon">
-              <i class="fas fa-pen"></i>
-            </div>
-            <h4 class="feature-title">Personalización Completa</h4>
-            <p class="feature-description">
-              Personaliza secciones, colores, servicios y contenido de tu
-              portafolio.
-            </p>
-          </div>
-
           <!-- Tarjeta de Gestión de Archivos -->
           <div class="feature-card" :class="{ 'dark-mode': isDarkMode }">
             <div class="feature-icon">

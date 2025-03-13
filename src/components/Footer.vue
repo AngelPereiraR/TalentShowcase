@@ -5,7 +5,10 @@
       <div class="footer__content">
         <!-- Sección de copyright -->
         <div class="footer__copyright">
-          TalentShowcase © 2025 by Ángel Pereira is licensed under
+          <a href="https://talentshowcase-ampr.netlify.app/" target="_blank"
+            rel="noopener noreferrer">TalentShowcase</a> © 2025 by <a href="https://portfolio-angelpereira.netlify.app/"
+            target="_blank" rel="noopener noreferrer">Ángel Pereira</a> is
+          licensed under
           <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" class="link--external">CC
             BY-NC-ND 4.0</a>
         </div>
