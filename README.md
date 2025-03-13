@@ -79,6 +79,14 @@ npm run build
 
 Los archivos compilados se encontrarán en la carpeta `dist/`.
 
+### Acceso en Producción
+
+La aplicación compilada está disponible públicamente en la siguiente URL:
+
+https://talentshowcase-ampr.netlify.app/
+
+Puedes acceder directamente a esta dirección para ver la versión en producción de TalentShowcase.
+
 ## Futuras Mejoras
 
 ### Características Propuestas
