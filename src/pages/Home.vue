@@ -1,15 +1,22 @@
 <template>
+  <!-- Página principal de la aplicación -->
   <div>
+    <!-- Sección Hero con soporte para modo oscuro -->
     <section class="hero" :class="{ 'dark-mode': isDarkMode }">
       <div class="container">
+        <!-- Título principal de la página -->
         <h2 class="hero__title">Muestra tu talento al mundo</h2>
+        <!-- Subtítulo de la página -->
         <p class="hero__subtitle">Crea tu portafolio en línea de manera fácil y personalizada</p>
       </div>
     </section>
 
+    <!-- Sección Acerca de con soporte para modo oscuro -->
     <section class="about" :class="{ 'dark-mode': isDarkMode }">
       <div class="container">
+        <!-- Título de la sección Acerca de -->
         <h3 class="about__title">¿Qué es TalentShowcase?</h3>
+        <!-- Contenido de la sección Acerca de -->
         <p class="about__text">
           TalentShowcase es una plataforma diseñada para profesionales de
           diversos sectores que buscan destacar su experiencia y habilidades de
@@ -18,9 +25,12 @@
       </div>
     </section>
 
+    <!-- Sección Ejemplo de Portafolio con soporte para modo oscuro -->
     <section class="portfolio-example" :class="{ 'dark-mode': isDarkMode }">
       <div class="container">
+        <!-- Título de la sección Ejemplo de Portafolio -->
         <h3 class="portfolio-example__title">Ejemplo de portafolio</h3>
+        <!-- Imagen de ejemplo de portafolio -->
         <div class="portfolio-example__image">
           <img src="@/assets/portfolio-example.png" alt="Ejemplo de portafolio" />
         </div>
@@ -30,11 +40,13 @@
 </template>
 
 <script>
+// Importación del store de tema para el modo oscuro
 import { useThemeStore } from '../stores/themeStore';
 
 export default {
   name: 'Home',
   computed: {
+    // Propiedad computada para determinar si está activado el modo oscuro
     isDarkMode() {
       return useThemeStore().isDarkMode;
     }
@@ -43,12 +55,14 @@ export default {
 </script>
 
 <style scoped>
+/* Estilos base para el contenedor */
 .container {
   max-width: 90%;
   margin: 0 auto;
   padding: 0 1.25rem;
 }
 
+/* Estilos para la sección Hero */
 .hero {
   background: linear-gradient(to right, var(--hover-400), var(--hover-100));
   padding: 16rem 0 10rem;
@@ -70,6 +84,7 @@ export default {
   background-color: var(--botones-600);
 }
 
+/* Estilos para el título y subtítulo de la sección Hero */
 .hero__title {
   font-family: var(--font-family-title);
   font-weight: var(--font-weight-title);
@@ -84,6 +99,7 @@ export default {
   margin-bottom: 1.875rem;
 }
 
+/* Estilos para la sección Acerca de */
 .about {
   padding: 7.5rem 0;
   text-align: center;
@@ -94,6 +110,7 @@ export default {
   color: var(--neutral-textos-200);
 }
 
+/* Estilos para el título y texto de la sección Acerca de */
 .about__title {
   font-family: var(--font-family-menu);
   font-weight: var(--font-weight-menu);
@@ -108,6 +125,7 @@ export default {
   font-size: var(--font-size-text-large);
 }
 
+/* Estilos para la sección Ejemplo de Portafolio */
 .portfolio-example {
   background-color: var(--primario-100);
   padding: 7.5rem 0;
@@ -120,6 +138,7 @@ export default {
   color: var(--neutral-textos-200);
 }
 
+/* Estilos para el título e imagen de la sección Ejemplo de Portafolio */
 .portfolio-example__title {
   font-family: var(--font-family-menu);
   font-weight: var(--font-weight-menu);
@@ -138,7 +157,7 @@ export default {
   box-shadow: 0 0.3125rem 0.9375rem rgba(var(--sombras-100), 0.2);
 }
 
-/* Media Queries for small screens */
+/* Adaptaciones para pantallas pequeñas */
 @media (max-width: 768px) {
   .container {
     padding: 0 1rem;

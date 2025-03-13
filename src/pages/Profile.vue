@@ -1,17 +1,23 @@
 <template>
+  <!-- Contenedor principal del perfil con soporte para modo oscuro -->
   <div class="profile-container" :class="{ 'dark-mode': isDarkMode }">
     <div class="profile-content">
+      <!-- Spinner de carga mientras se obtienen los datos -->
       <div v-if="loading" class="spinner-container">
         <Spinner />
       </div>
+      <!-- Contenido del perfil cuando los datos están cargados -->
       <div v-else>
+        <!-- Cabecera del perfil -->
         <div class="profile-header">
           <div class="header-content">
+            <!-- Título del perfil con nombre de usuario y email -->
             <h1 class="profile-title" v-if="user" :class="{ 'dark-mode': isDarkMode }">
               {{ user.username }} - {{ user.email }}
             </h1>
+            <!-- Información del perfil -->
             <div class="profile-info">
-              <!-- Información del perfil -->
+              <!-- Información básica del perfil -->
               <div v-if="profile">
                 <p class="profile-fullname" v-if="profile.full_name" :class="{ 'dark-mode': isDarkMode }">
                   Nombre Completo: {{ profile.full_name }}
@@ -46,11 +52,14 @@
               </p>
             </div>
           </div>
+          <!-- Barra lateral con avatar y acciones -->
           <div class="profile-sidebar">
+            <!-- Avatar del usuario -->
             <div class="profile-avatar">
               <img :src="profile?.photo_url" alt="Avatar" v-if="profile" class="avatar-image">
               <i class="fas fa-user-circle avatar-icon" v-else></i>
             </div>
+            <!-- Acciones disponibles (solo para el propio perfil) -->
             <div class="profile-actions">
               <router-link v-if="isOwnProfile" :to="{ name: 'EditProfile', params: { id: user?.id } }"
                 :class="{ 'dark-mode': isDarkMode }" class="action-item">
@@ -61,7 +70,7 @@
           </div>
         </div>
 
-        <!-- Experiencia Profesional -->
+        <!-- Sección de Experiencia Profesional -->
         <div class="profile-section">
           <h2 class="section-title" :class="{ 'dark-mode': isDarkMode }">Experiencia Profesional</h2>
           <div v-if="professionalExperiences && professionalExperiences.length > 0">
@@ -84,7 +93,7 @@
           </p>
         </div>
 
-        <!-- Educación -->
+        <!-- Sección de Educación -->
         <div class="profile-section">
           <h2 class="section-title" :class="{ 'dark-mode': isDarkMode }">Educación</h2>
           <div v-if="education && education.length > 0">
@@ -105,7 +114,7 @@
           </p>
         </div>
 
-        <!-- Habilidades -->
+        <!-- Sección de Habilidades -->
         <div class="profile-section">
           <h2 class="section-title" :class="{ 'dark-mode': isDarkMode }">Habilidades</h2>
           <div v-if="skills && skills.length > 0" class="skills-container">
@@ -118,7 +127,7 @@
           </p>
         </div>
 
-        <!-- Proyectos Destacados -->
+        <!-- Sección de Proyectos Destacados -->
         <div class="profile-section">
           <h2 class="section-title" :class="{ 'dark-mode': isDarkMode }">Proyectos Destacados</h2>
           <div v-if="featuredProjects && featuredProjects.length > 0">
@@ -148,6 +157,7 @@
 </template>
 
 <script>
+// Importación de dependencias y componentes necesarios
 import { useAuthStore } from '../stores/authStore';
 import { useThemeStore } from '../stores/themeStore';
 import { useRoute, useRouter } from 'vue-router';
@@ -161,6 +171,7 @@ export default {
   },
   data() {
     return {
+      // Datos del perfil y estado de carga
       user: null,
       profile: null,
       socialNetworks: null,
@@ -173,9 +184,11 @@ export default {
     }
   },
   computed: {
+    // Propiedad computada para el modo oscuro
     isDarkMode() {
       return useThemeStore().isDarkMode;
     },
+    // Determina si es el perfil propio del usuario autenticado
     isOwnProfile() {
       const authStore = useAuthStore();
       const route = useRoute();
@@ -183,13 +196,14 @@ export default {
     }
   },
   async created() {
-    await this.fetchInfo()
+    // Ciclo de vida: Cuando el componente se crea, carga los datos
+    await this.fetchInfo();
+    // Redirecciona a la página de error si el usuario no existe
     if (this.user === null) {
-      this.$router.push({ name: "NotFound" })
+      this.$router.push({ name: "NotFound" });
     }
+    // Configura un watcher para detectar cambios en la autenticación
     const authStore = useAuthStore();
-
-    // Configurar un watcher para detectar cambios en la autenticación
     this.authStore = authStore;
     this.unwatchAuth = this.$watch(
       () => this.authStore.isAuthenticated,
@@ -201,62 +215,66 @@ export default {
     );
   },
   beforeUnmount() {
-    // Limpiar el watcher al desmontar el componente
+    // Limpia el watcher al desmontar el componente
     this.unwatchAuth();
   },
   watch: {
+    // Recarga la página al cambiar de usuario
     '$route.params.id': {
       handler: function (newId, oldId) {
         if (newId !== oldId) {
-          // Recargar la página al cambiar de usuario
           window.location.reload();
         }
       }
     }
   },
   methods: {
+    // Método para obtener todos los datos del perfil
     async fetchInfo() {
       try {
         const route = useRoute();
         const userId = route.params.id;
 
-        // Obtener usuario
+        // Obtiene los datos del usuario
         const userResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}api/users/${userId}`);
         this.user = userResponse.data.user;
 
-        // Obtener perfil
+        // Obtiene los datos del perfil
         const profileResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}api/profiles/user/${userId}`);
         this.profile = profileResponse.data;
 
-        // Obtener redes sociales
+        // Obtiene las redes sociales si hay perfil
         if (this.profile) {
           const socialResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}api/social-networks/profile/${this.profile.id}`);
           this.socialNetworks = socialResponse.data;
         }
 
-        // Obtener experiencia profesional
+        // Obtiene la experiencia profesional
         const professionalExperiencesResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}api/professional-experience/profile/${this.profile?.id}`);
         this.professionalExperiences = professionalExperiencesResponse.data;
 
-        // Obtener educación
+        // Obtiene la educación
         const educationResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}api/education/profile/${this.profile?.id}`);
         this.education = educationResponse.data;
 
-        // Obtener habilidades
+        // Obtiene las habilidades
         const skillsResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}api/skills/profile/${this.profile?.id}`);
         this.skills = skillsResponse.data;
 
-        // Obtener proyectos destacados
+        // Obtiene los proyectos destacados
         const featuredProjectsResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}api/projects/profile/${this.profile?.id}`);
         this.featuredProjects = featuredProjectsResponse.data;
 
       } catch (error) {
+        // Manejo de errores
         this.error = 'Error al cargar los datos del perfil';
         console.error(error);
       } finally {
+        // Cambia el estado de carga
         this.loading = false;
       }
     },
+    // Formatea fechas para mostrar en el perfil
     formatDate(dateString) {
       if (!dateString) return '';
       const date = new Date(dateString);
@@ -267,6 +285,7 @@ export default {
 </script>
 
 <style scoped>
+/* Estilos base para el contenedor del perfil */
 .profile-container {
   display: flex;
   min-height: 100vh;
@@ -277,11 +296,13 @@ export default {
   background-color: var(--primario-900);
 }
 
+/* Estilos para el contenido principal del perfil */
 .profile-content {
   flex: 1;
   padding: 2rem;
 }
 
+/* Contenedor del spinner de carga */
 .spinner-container {
   display: flex;
   justify-content: center;
@@ -289,6 +310,7 @@ export default {
   min-height: 500px;
 }
 
+/* Estilos para la cabecera del perfil */
 .profile-header {
   display: flex;
   justify-content: space-between;
@@ -296,10 +318,12 @@ export default {
   margin-bottom: 3rem;
 }
 
+/* Estilos para el contenido de la cabecera */
 .header-content {
   flex: 1;
 }
 
+/* Estilos para la barra lateral */
 .profile-sidebar {
   width: 300px;
   padding: 2rem;
@@ -312,6 +336,7 @@ export default {
   background-color: var(--primario-800);
 }
 
+/* Estilos para el título del perfil */
 .profile-title {
   font-family: var(--font-family-title);
   font-weight: var(--font-weight-title);
@@ -323,10 +348,12 @@ export default {
   color: var(--neutral-textos-200);
 }
 
+/* Estilos para la información del perfil */
 .profile-info {
   margin-bottom: 2rem;
 }
 
+/* Estilos para los campos de información del perfil */
 .profile-fullname,
 .profile-professional-title,
 .profile-description {
@@ -342,6 +369,7 @@ export default {
   color: var(--neutral-textos-400);
 }
 
+/* Estilos para el título de redes sociales */
 .social-networks-title {
   font-family: var(--font-family-menu);
   font-weight: var(--font-weight-menu);
@@ -353,6 +381,7 @@ export default {
   color: var(--neutral-textos-400);
 }
 
+/* Estilos para los items de redes sociales */
 .social-network-item {
   font-family: var(--font-family-text-normal);
   font-weight: var(--font-weight-text-normal);
@@ -368,6 +397,7 @@ export default {
   color: var(--hover-300);
 }
 
+/* Estilos para los subtítulos del perfil */
 .profile-subtitle {
   font-family: var(--font-family-text-normal);
   font-weight: var(--font-weight-text-normal);
@@ -379,6 +409,7 @@ export default {
   color: var(--neutral-textos-500);
 }
 
+/* Estilos para los títulos de sección */
 .section-title {
   font-family: var(--font-family-menu);
   font-weight: var(--font-weight-menu);
@@ -390,6 +421,7 @@ export default {
   color: var(--neutral-textos-200);
 }
 
+/* Estilos para los subtítulos de sección */
 .section-subtitle {
   font-family: var(--font-family-text-normal);
   font-weight: var(--font-weight-text-normal);
@@ -401,10 +433,12 @@ export default {
   color: var(--neutral-textos-500);
 }
 
+/* Estilos para las secciones del perfil */
 .profile-section {
   margin-bottom: 3rem;
 }
 
+/* Estilos para el avatar */
 .profile-avatar {
   margin-bottom: 2rem;
   width: 16rem;
@@ -429,6 +463,7 @@ export default {
   background-color: var(--primario-800);
 }
 
+/* Estilos para las acciones del perfil */
 .profile-actions {
   width: 100%;
 }
@@ -452,6 +487,7 @@ export default {
   font-size: var(--font-size-text-normal);
 }
 
+/* Estilos para los items de experiencia, educación y proyectos */
 .experience-item,
 .education-item,
 .project-item {
@@ -469,6 +505,7 @@ export default {
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
 }
 
+/* Estilos para los títulos de experiencia, educación y proyectos */
 .experience-title,
 .education-title,
 .project-title {
@@ -484,6 +521,7 @@ export default {
   color: var(--neutral-textos-200);
 }
 
+/* Estilos para las fechas de experiencia, educación y proyectos */
 .experience-dates,
 .education-dates,
 .project-dates {
@@ -497,6 +535,7 @@ export default {
   color: var(--neutral-textos-200);
 }
 
+/* Estilos para las descripciones de experiencia, educación y proyectos */
 .experience-description,
 .education-description,
 .project-description {
@@ -510,6 +549,7 @@ export default {
   color: var(--neutral-textos-200);
 }
 
+/* Estilos para los enlaces de proyectos */
 .project-url {
   margin-bottom: 0.75rem;
 }
@@ -531,6 +571,7 @@ export default {
   text-decoration: underline;
 }
 
+/* Estilos para las habilidades */
 .skills-container {
   display: flex;
   flex-wrap: wrap;
@@ -551,6 +592,7 @@ export default {
   color: var(--neutral-textos-200);
 }
 
+/* Adaptaciones para pantallas pequeñas */
 @media (max-width: 1450px) {
   .profile-header {
     padding: 8rem 0;

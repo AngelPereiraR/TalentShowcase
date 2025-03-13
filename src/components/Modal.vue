@@ -1,10 +1,14 @@
-<!-- components/Modal.vue -->
 <template>
+  <!-- Fondo transparente del modal -->
   <div class="modal-overlay" @click.self="closeModal">
+    <!-- Contenido del modal -->
     <div class="modal">
       <div class="modal-content">
+        <!-- Título del modal -->
         <h3 class="modal-title">{{ title }}</h3>
+        <!-- Mensaje del modal -->
         <p class="modal-message">{{ message }}</p>
+        <!-- Botón para cerrar el modal -->
         <button class="modal-button" @click="closeModal">Aceptar</button>
       </div>
     </div>
@@ -15,16 +19,19 @@
 export default {
   name: 'Modal',
   props: {
+    // Título del modal, con valor predeterminado 'Error'
     title: {
       type: String,
       default: 'Error'
     },
+    // Mensaje del modal, requerido
     message: {
       type: String,
       required: true
     }
   },
   methods: {
+    // Método para cerrar el modal
     closeModal() {
       this.$emit('close');
     }
@@ -33,6 +40,7 @@ export default {
 </script>
 
 <style scoped>
+/* Fondo transparente del modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -46,6 +54,7 @@ export default {
   z-index: 1000;
 }
 
+/* Contenedor principal del modal */
 .modal {
   background-color: white;
   padding: 2rem;
@@ -55,10 +64,12 @@ export default {
   max-width: 40rem;
 }
 
+/* Contenido del modal */
 .modal-content {
   text-align: center;
 }
 
+/* Título del modal */
 .modal-title {
   font-family: var(--font-family-title);
   font-weight: var(--font-weight-title);
@@ -67,6 +78,7 @@ export default {
   margin-bottom: 1rem;
 }
 
+/* Mensaje del modal */
 .modal-message {
   font-family: var(--font-family-text-normal);
   font-size: var(--font-size-text-normal);
@@ -74,6 +86,7 @@ export default {
   margin-bottom: 1.5rem;
 }
 
+/* Botón de aceptación */
 .modal-button {
   background-color: var(--botones-400);
   color: var(--neutral-textos-50);
@@ -85,6 +98,7 @@ export default {
   transition: background-color 0.3s;
 }
 
+/* Efecto hover en el botón */
 .modal-button:hover {
   background-color: var(--botones-500);
 }

@@ -1,11 +1,15 @@
 <template>
+  <!-- Encabezado de la aplicación con soporte para modo oscuro -->
   <header class="header" :class="{ 'dark-mode': isDarkMode }">
     <div class="container">
       <div class="header__content">
+        <!-- Logo y título de la aplicación -->
         <div class="logo">
           <img src="@/assets/logo-portfolio.webp" alt="TalentShowcase" />
           <h1 class="logo__title">TalentShowcase</h1>
         </div>
+
+        <!-- Menú de navegación -->
         <nav class="nav__menu">
           <ul>
             <li><router-link :to="{ name: 'Home' }">Inicio</router-link></li>
@@ -13,12 +17,18 @@
             <li><router-link :to="{ name: 'Contact' }">Contacto</router-link></li>
           </ul>
         </nav>
+
+        <!-- Acciones de usuario y tema -->
         <div class="header__actions">
+          <!-- Interruptor de modo oscuro -->
           <div class="theme-toggle" :class="{ 'dark-mode': isDarkMode }">
             <input type="checkbox" id="theme-switch" @change="toggleTheme" />
             <label for="theme-switch" class="theme-toggle__label"></label>
           </div>
+
+          <!-- Botones de autenticación -->
           <div class="auth-buttons">
+            <!-- Si el usuario está autenticado -->
             <template v-if="isAuthenticated && userId">
               <router-link :to="{ name: 'Profile', params: { id: userId } }" class="btn--profile">
                 <i class="fas fa-user"></i>
@@ -29,6 +39,7 @@
                 Cerrar Sesión
               </button>
             </template>
+            <!-- Si el usuario no está autenticado -->
             <template v-else>
               <router-link :to="{ name: 'Login' }" class="btn--login">
                 <i class="fas fa-sign-in-alt"></i>
@@ -47,37 +58,45 @@
 </template>
 
 <script>
+// Importación de los stores necesarios
 import { useAuthStore } from '../stores/authStore';
 import { useThemeStore } from '../stores/themeStore';
 
 export default {
   name: 'Header',
   computed: {
+    // Propiedad computada para determinar si el usuario está autenticado
     isAuthenticated() {
       return useAuthStore().isAuthenticated;
     },
+    // Propiedad computada para obtener el ID del usuario autenticado
     userId() {
       return useAuthStore().getUserId;
     },
+    // Propiedad computada para determinar si está activado el modo oscuro
     isDarkMode() {
       return useThemeStore().isDarkMode;
     }
   },
   methods: {
+    // Método para cerrar sesión
     logout() {
       useAuthStore().logout();
     },
+    // Método para alternar entre modo claro y oscuro
     toggleTheme() {
       useThemeStore().toggleTheme();
     }
   },
   mounted() {
+    // Cargar preferencias de tema al montar el componente
     useThemeStore().loadThemePreference();
   }
 }
 </script>
 
 <style scoped>
+/* Estilos base para el encabezado */
 .header {
   background-color: var(--neutral-textos-100);
   padding: 1.5rem 0;
@@ -88,7 +107,7 @@ export default {
   width: 100%;
 }
 
-/* Clase específica para modo oscuro */
+/* Estilos para modo oscuro */
 .header.dark-mode {
   background-color: var(--neutral-textos-800);
   box-shadow: 0 0.125rem 0.3125rem rgba(var(--sombras-100), 0.3);
@@ -227,6 +246,7 @@ export default {
   color: var(--neutral-textos-600);
 }
 
+/* Adaptaciones para pantallas medianas */
 @media (max-width: 1450px) {
   .header__content {
     flex-direction: column;
@@ -234,7 +254,7 @@ export default {
   }
 }
 
-/* Media Query para Tablet */
+/* Adaptaciones para móviles */
 @media (max-width: 768px) {
   .header__content {
     flex-direction: column;

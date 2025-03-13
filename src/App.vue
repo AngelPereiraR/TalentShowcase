@@ -1,39 +1,51 @@
 <template>
+  <!-- Estructura principal de la aplicación -->
   <div id="app">
+    <!-- Componente Header: Encabezado de la aplicación -->
     <Header />
 
+    <!-- Contenido principal de la aplicación -->
     <main>
+      <!-- Spinner de carga condicional: Solo se muestra cuando isLoading es verdadero -->
       <Spinner v-if="isLoading" />
+      <!-- Punto de montaje para las vistas enrutadas -->
       <router-view />
     </main>
 
+    <!-- Componente Footer: Pie de página de la aplicación -->
     <Footer />
   </div>
 </template>
 
 <script>
+// Importación de componentes locales
 import Header from './components/Header.vue';
 import Footer from './components/Footer.vue';
 import Spinner from './components/Spinner.vue';
+// Importación de stores de Pinia para gestión de estado
 import { useLoadingStore } from './stores/loadingStore';
 import { useThemeStore } from './stores/themeStore';
 
 export default {
   name: 'App',
   components: {
+    // Registro de componentes locales
     Header,
     Footer,
     Spinner
   },
   computed: {
+    // Propiedad computada para acceder al estado de carga desde el store
     isLoading() {
       return useLoadingStore().isLoading
     },
+    // Propiedad computada para acceder al modo oscuro desde el store
     isDarkMode() {
       return useThemeStore().isDarkMode
     }
   },
   mounted() {
+    // Ciclo de vida: Cuando el componente se monta, carga las preferencias de tema
     useThemeStore().loadThemePreference();
   }
 }
@@ -41,6 +53,7 @@ export default {
 
 <style>
 :root {
+  /* Variables CSS para colores y tipografías */
   /* Neutral / Textos */
   --neutral-textos-50: #FFFFFF;
   --neutral-textos-100: #F6F6F6;
@@ -148,12 +161,14 @@ export default {
   font-size: 16px;
 }
 
+/* Reset de estilos globales */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* Estilos base para el body */
 body {
   font-family: var(--font-family-text-normal);
   font-weight: var(--font-weight-text-normal);

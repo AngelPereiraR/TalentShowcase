@@ -1,8 +1,12 @@
 <template>
+  <!-- Contenedor principal de la página de error 404 con soporte para modo oscuro -->
   <div class="not-found-container" :class="{ 'dark-mode': isDarkMode }">
     <div class="not-found-content">
+      <!-- Código de error con animación de rebote -->
       <h1 class="error-code" :class="{ bounce: animate, 'dark-mode': isDarkMode }">404</h1>
+      <!-- Mensaje de error -->
       <h2 class="error-message" :class="{ 'dark-mode': isDarkMode }">Página no encontrada</h2>
+      <!-- Botón para volver a la página de inicio -->
       <button class="back-button" @click="goBackHome">
         Volver al inicio
       </button>
@@ -11,27 +15,33 @@
 </template>
 
 <script>
+// Importación del store de tema para el modo oscuro
 import { useThemeStore } from '../stores/themeStore';
 
 export default {
   name: "NotFound",
   data() {
     return {
+      // Estado para controlar la animación del código de error
       animate: false
     };
   },
   computed: {
+    // Propiedad computada para determinar si está activado el modo oscuro
     isDarkMode() {
       return useThemeStore().isDarkMode;
     }
   },
   mounted() {
+    // Iniciar la animación cuando el componente se monta
     this.startAnimation();
   },
   methods: {
+    // Método para activar la animación del código de error
     startAnimation() {
       this.animate = true;
     },
+    // Método para regresar a la página de inicio
     goBackHome() {
       this.$router.push({ name: 'Home' });
     }
@@ -40,6 +50,7 @@ export default {
 </script>
 
 <style scoped>
+/* Estilos base para el contenedor de error */
 .not-found-container {
   display: flex;
   justify-content: center;
@@ -53,11 +64,13 @@ export default {
   background-color: var(--primario-900);
 }
 
+/* Estilos para el contenido de error */
 .not-found-content {
   text-align: center;
   max-width: 600px;
 }
 
+/* Estilos para el código de error */
 .error-code {
   font-family: var(--font-family-title);
   font-size: var(--font-size-title-desktop);
@@ -71,6 +84,7 @@ export default {
   color: var(--hover-300);
 }
 
+/* Estilos para el mensaje de error */
 .error-message {
   font-family: var(--font-family-subtitle);
   font-size: var(--font-size-subtitle-desktop);
@@ -83,6 +97,7 @@ export default {
   color: var(--neutral-textos-200);
 }
 
+/* Estilos para el botón de volver */
 .back-button {
   background-color: var(--botones-400);
   color: var(--neutral-textos-50);
@@ -107,6 +122,7 @@ export default {
   background-color: var(--botones-600);
 }
 
+/* Definición de la animación de rebote */
 @keyframes bounce {
 
   0%,
@@ -126,7 +142,7 @@ export default {
   }
 }
 
-/* Estilos para pantallas pequeñas */
+/* Adaptaciones para pantallas pequeñas */
 @media (max-width: 768px) {
   .error-code {
     font-size: var(--font-size-title-mobile);

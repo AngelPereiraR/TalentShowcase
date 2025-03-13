@@ -1,98 +1,143 @@
 <template>
+  <!-- Contenedor principal de la sección de edición de proyectos destacados -->
   <div class="edit-section" :class="{ 'dark-mode': isDarkMode }">
+    <!-- Título de la sección -->
     <h2 class="section-title">Editar Proyectos Destacados</h2>
 
+    <!-- Formulario para editar proyectos -->
     <form class="form" @submit.prevent="handleSubmit">
+      <!-- Spinner de carga mientras se procesan los datos -->
       <div v-if="isLoading" class="spinner-container">
         <Spinner />
       </div>
+
+      <!-- Lista de proyectos existentes -->
       <div v-for="(project, index) in form.projects" :key="index" class="project-item">
+        <!-- Campo de entrada para el título del proyecto -->
         <div class="form-group">
           <label :for="'project-title-' + index" class="form-label">Título del proyecto</label>
           <input :id="'project-title-' + index" type="text" class="form-input" v-model="project.title"
             @blur="validateTitle(index)" />
-          <div v-if="errors[index] && errors[index].title" class="error-message">{{ errors[index].title }}</div>
+          <!-- Mensaje de error si la validación falla -->
+          <div v-if="errors[index] && errors[index].title" class="error-message">
+            {{ errors[index].title }}
+          </div>
         </div>
 
+        <!-- Campo de entrada para la descripción del proyecto -->
         <div class="form-group">
           <label :for="'project-description-' + index" class="form-label">Descripción del proyecto</label>
           <textarea :id="'project-description-' + index" class="form-textarea" v-model="project.description"
             @blur="validateDescription(index)"></textarea>
-          <div v-if="errors[index] && errors[index].description" class="error-message">{{ errors[index].description }}
+          <!-- Mensaje de error si la validación falla -->
+          <div v-if="errors[index] && errors[index].description" class="error-message">
+            {{ errors[index].description }}
           </div>
         </div>
 
+        <!-- Campo de entrada para la URL del proyecto -->
         <div class="form-group">
           <label :for="'project-url-' + index" class="form-label">URL del proyecto</label>
           <input :id="'project-url-' + index" type="text" class="form-input" v-model="project.url"
             @blur="validateUrl(index)" />
-          <div v-if="errors[index] && errors[index].url" class="error-message">{{ errors[index].url }}</div>
+          <!-- Mensaje de error si la validación falla -->
+          <div v-if="errors[index] && errors[index].url" class="error-message">
+            {{ errors[index].url }}
+          </div>
         </div>
 
+        <!-- Campo de entrada para la fecha de inicio -->
         <div class="form-group">
           <label :for="'project-start-date-' + index" class="form-label">Fecha de inicio</label>
           <input :id="'project-start-date-' + index" type="date" class="form-input" v-model="project.start_date"
             @blur="validateStartDate(index)" />
-          <div v-if="errors[index] && errors[index].start_date" class="error-message">{{ errors[index].start_date }}
+          <!-- Mensaje de error si la validación falla -->
+          <div v-if="errors[index] && errors[index].start_date" class="error-message">
+            {{ errors[index].start_date }}
           </div>
         </div>
 
+        <!-- Campo de entrada para la fecha de fin -->
         <div class="form-group">
           <label :for="'project-end-date-' + index" class="form-label">Fecha de fin</label>
           <input :id="'project-end-date-' + index" type="date" class="form-input" v-model="project.end_date"
             @blur="validateEndDate(index)" />
-          <div v-if="errors[index] && errors[index].end_date" class="error-message">{{ errors[index].end_date }}</div>
+          <!-- Mensaje de error si la validación falla -->
+          <div v-if="errors[index] && errors[index].end_date" class="error-message">
+            {{ errors[index].end_date }}
+          </div>
         </div>
 
+        <!-- Botón para eliminar el proyecto -->
         <div class="project-actions">
-          <button type="button" class="delete-btn" @click="deleteProject(index)">Eliminar</button>
+          <button type="button" class="delete-btn" @click="deleteProject(index)">
+            Eliminar
+          </button>
         </div>
       </div>
 
+      <!-- Sección para añadir nuevos proyectos -->
       <div class="add-project">
+        <!-- Campo de entrada para el título del nuevo proyecto -->
         <div class="form-group">
           <label for="new-project-title" class="form-label">Título del proyecto</label>
           <input type="text" id="new-project-title" class="form-input" v-model="newProject.title"
             @blur="validateNewTitle" />
+          <!-- Mensaje de error si la validación falla -->
           <div v-if="newErrors.title" class="error-message">{{ newErrors.title }}</div>
         </div>
 
+        <!-- Campo de entrada para la descripción del nuevo proyecto -->
         <div class="form-group">
           <label for="new-project-description" class="form-label">Descripción del proyecto</label>
           <textarea id="new-project-description" class="form-textarea" v-model="newProject.description"
             @blur="validateNewDescription"></textarea>
+          <!-- Mensaje de error si la validación falla -->
           <div v-if="newErrors.description" class="error-message">{{ newErrors.description }}</div>
         </div>
 
+        <!-- Campo de entrada para la URL del nuevo proyecto -->
         <div class="form-group">
           <label for="new-project-url" class="form-label">URL del proyecto</label>
           <input type="text" id="new-project-url" class="form-input" v-model="newProject.url" @blur="validateNewUrl" />
+          <!-- Mensaje de error si la validación falla -->
           <div v-if="newErrors.url" class="error-message">{{ newErrors.url }}</div>
         </div>
 
+        <!-- Campo de entrada para la fecha de inicio del nuevo proyecto -->
         <div class="form-group">
           <label for="new-project-start-date" class="form-label">Fecha de inicio</label>
           <input type="date" id="new-project-start-date" class="form-input" v-model="newProject.start_date"
             @blur="validateNewStartDate" />
+          <!-- Mensaje de error si la validación falla -->
           <div v-if="newErrors.start_date" class="error-message">{{ newErrors.start_date }}</div>
         </div>
 
+        <!-- Campo de entrada para la fecha de fin del nuevo proyecto -->
         <div class="form-group">
           <label for="new-project-end-date" class="form-label">Fecha de fin</label>
           <input type="date" id="new-project-end-date" class="form-input" v-model="newProject.end_date"
             @blur="validateNewEndDate" />
+          <!-- Mensaje de error si la validación falla -->
           <div v-if="newErrors.end_date" class="error-message">{{ newErrors.end_date }}</div>
         </div>
 
-        <button type="button" class="add-btn" @click="addProject" :disabled="hasNewErrors">Añadir</button>
+        <!-- Botón para añadir el nuevo proyecto -->
+        <button type="button" class="add-btn" @click="addProject" :disabled="hasNewErrors">
+          Añadir
+        </button>
       </div>
 
-      <button type="submit" class="submit-btn" :disabled="hasErrors">Guardar cambios</button>
+      <!-- Botón para guardar todos los cambios -->
+      <button type="submit" class="submit-btn" :disabled="hasErrors">
+        Guardar cambios
+      </button>
     </form>
   </div>
 </template>
 
 <script>
+// Importación de dependencias y componentes necesarios
 import { useThemeStore } from '../stores/themeStore';
 import { useProfileStore } from '../stores/profileStore';
 import { useAuthStore } from '../stores/authStore';
@@ -106,24 +151,29 @@ export default {
     Spinner
   },
   computed: {
+    // Propiedad computada para determinar si está activado el modo oscuro
     isDarkMode() {
       return useThemeStore().isDarkMode;
     },
+    // Propiedad computada para verificar si hay errores en los proyectos existentes
     hasErrors() {
       return this.form.projects.some((project, index) => {
         const projectErrors = this.errors[index];
         return projectErrors && (projectErrors.title || projectErrors.description || projectErrors.url || projectErrors.start_date || projectErrors.end_date);
       });
     },
+    // Propiedad computada para verificar si hay errores en el nuevo proyecto
     hasNewErrors() {
       return this.newErrors.title || this.newErrors.description || this.newErrors.url || this.newErrors.start_date || this.newErrors.end_date;
     }
   },
   data() {
     return {
+      // Formulario con los proyectos actuales
       form: {
         projects: []
       },
+      // Nuevo proyecto a añadir
       newProject: {
         title: '',
         description: '',
@@ -132,11 +182,17 @@ export default {
         end_date: '',
         slug: ''
       },
+      // Estado de carga
       isLoading: false,
+      // Referencia al store de perfil
       profileStore: useProfileStore(),
+      // Referencia al store de autenticación
       authStore: useAuthStore(),
+      // Referencia a la ruta actual
       route: useRoute(),
+      // Errores de validación para cada proyecto existente
       errors: [],
+      // Errores de validación para el nuevo proyecto
       newErrors: {
         title: null,
         description: null,
@@ -144,78 +200,94 @@ export default {
         start_date: null,
         end_date: null
       },
-      existingProjectIds: [] // Nuevo array para guardar los IDs de los proyectos existentes
+      // IDs de los proyectos existentes
+      existingProjectIds: []
     };
   },
   mounted() {
+    // Cargar los proyectos existentes al montar el componente
     this.loadProjects();
   },
   methods: {
+    // Método para cargar los proyectos existentes desde la API
     async loadProjects() {
       this.isLoading = true;
       try {
-        const projectsResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}api/projects/profile/${this.profileStore.profile.id}`, {
-          headers: {
-            'Authorization': `Bearer ${this.authStore.token}`
+        // Realizar solicitud para obtener los proyectos del perfil
+        const projectsResponse = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}api/projects/profile/${this.profileStore.profile.id}`,
+          {
+            headers: {
+              'Authorization': `Bearer ${this.authStore.token}`
+            }
           }
-        });
+        );
         const projectsData = projectsResponse.data;
+        // Actualizar el store de perfil con los proyectos cargados
         this.profileStore.setProjects(projectsData);
+        // Asignar los proyectos al formulario
         this.form.projects = projectsData || [];
-
         // Guardar los IDs de los proyectos existentes
         this.existingProjectIds = projectsData.map(project => project.id);
       } catch (error) {
+        // Manejo de errores
         console.error('Error al cargar los proyectos:', error);
       } finally {
+        // Cambiar el estado de carga
         this.isLoading = false;
       }
     },
+    // Método para validar el título de un proyecto existente
     validateTitle(index) {
       if (!this.errors[index])
         this.errors[index] = {}
       if (!this.form.projects[index].title) {
-        this.errors[index].title = 'El campo Título del proyecto es obligatorio'
+        this.errors[index].title = 'El campo Título del proyecto es obligatorio';
       } else {
-        this.errors[index].title = null
+        this.errors[index].title = null;
       }
     },
+    // Método para validar la descripción de un proyecto existente
     validateDescription(index) {
       if (!this.errors[index])
         this.errors[index] = {}
       if (!this.form.projects[index].description) {
-        this.errors[index].description = 'El campo Descripción del proyecto es obligatorio'
+        this.errors[index].description = 'El campo Descripción del proyecto es obligatorio';
       } else {
-        this.errors[index].description = null
+        this.errors[index].description = null;
       }
     },
+    // Método para validar la URL de un proyecto existente
     validateUrl(index) {
       if (!this.errors[index])
         this.errors[index] = {}
       if (!this.form.projects[index].url) {
-        this.errors[index].url = 'El campo URL del proyecto es obligatorio'
+        this.errors[index].url = 'El campo URL del proyecto es obligatorio';
       } else {
-        this.errors[index].url = null
+        this.errors[index].url = null;
       }
     },
+    // Método para validar la fecha de inicio de un proyecto existente
     validateStartDate(index) {
       if (!this.errors[index])
         this.errors[index] = {}
       if (!this.form.projects[index].start_date) {
-        this.errors[index].start_date = 'El campo Fecha de inicio es obligatorio'
+        this.errors[index].start_date = 'El campo Fecha de inicio es obligatorio';
       } else {
-        this.errors[index].start_date = null
+        this.errors[index].start_date = null;
       }
     },
+    // Método para validar la fecha de fin de un proyecto existente
     validateEndDate(index) {
       if (!this.errors[index])
         this.errors[index] = {}
       if (!this.form.projects[index].end_date) {
-        this.errors[index].end_date = 'El campo Fecha de fin es obligatorio'
+        this.errors[index].end_date = 'El campo Fecha de fin es obligatorio';
       } else {
-        this.errors[index].end_date = null
+        this.errors[index].end_date = null;
       }
     },
+    // Método para validar el título del nuevo proyecto
     validateNewTitle() {
       if (!this.newProject.title) {
         this.newErrors.title = 'El campo Título del proyecto es obligatorio';
@@ -223,6 +295,7 @@ export default {
         this.newErrors.title = null;
       }
     },
+    // Método para validar la descripción del nuevo proyecto
     validateNewDescription() {
       if (!this.newProject.description) {
         this.newErrors.description = 'El campo Descripción del proyecto es obligatorio';
@@ -230,6 +303,7 @@ export default {
         this.newErrors.description = null;
       }
     },
+    // Método para validar la URL del nuevo proyecto
     validateNewUrl() {
       if (!this.newProject.url) {
         this.newErrors.url = 'El campo URL del proyecto es obligatorio';
@@ -237,6 +311,7 @@ export default {
         this.newErrors.url = null;
       }
     },
+    // Método para validar la fecha de inicio del nuevo proyecto
     validateNewStartDate() {
       if (!this.newProject.start_date) {
         this.newErrors.start_date = 'El campo Fecha de inicio es obligatorio';
@@ -244,6 +319,7 @@ export default {
         this.newErrors.start_date = null;
       }
     },
+    // Método para validar la fecha de fin del nuevo proyecto
     validateNewEndDate() {
       if (!this.newProject.end_date) {
         this.newErrors.end_date = 'El campo Fecha de fin es obligatorio';
@@ -251,6 +327,7 @@ export default {
         this.newErrors.end_date = null;
       }
     },
+    // Método para añadir un nuevo proyecto
     addProject() {
       this.validateNewTitle();
       this.validateNewDescription();
@@ -262,7 +339,9 @@ export default {
         // Generar slug para el nuevo proyecto
         this.newProject.slug = this.generateSlug(this.newProject.title);
 
+        // Añadir el nuevo proyecto al formulario
         this.form.projects.push({ ...this.newProject });
+        // Resetear el campo de nuevo proyecto
         this.newProject = {
           title: '',
           description: '',
@@ -271,6 +350,7 @@ export default {
           end_date: '',
           slug: ''
         };
+        // Limpiar errores de validación del nuevo proyecto
         this.newErrors = {
           title: null,
           description: null,
@@ -280,10 +360,14 @@ export default {
         };
       }
     },
+    // Método para eliminar un proyecto existente
     deleteProject(index) {
+      // Eliminar el proyecto del formulario
       this.form.projects.splice(index, 1);
+      // Eliminar el error correspondiente
       this.errors.splice(index, 1);
     },
+    // Método para generar un slug a partir del título
     generateSlug(title) {
       return title
         .toLowerCase()
@@ -291,6 +375,7 @@ export default {
         .replace(/\s+/g, '-')
         .replace(/[^a-z0-9-]/g, '');
     },
+    // Método para enviar el formulario y guardar los cambios
     async handleSubmit() {
       // Validar todos los proyectos existentes
       this.form.projects.forEach((project, index) => {
@@ -304,40 +389,48 @@ export default {
       if (!this.hasErrors) {
         try {
           this.isLoading = true;
-          // Eliminar todos los proyectos existentes
+          // Eliminar todos los proyectos existentes en la base de datos
           if (this.existingProjectIds.length > 0) {
             for (const projectId of this.existingProjectIds) {
               try {
-                await axios.delete(`${import.meta.env.VITE_BACKEND_URL}api/projects/${projectId}`, {
-                  headers: {
-                    'Authorization': `Bearer ${this.authStore.token}`
+                await axios.delete(
+                  `${import.meta.env.VITE_BACKEND_URL}api/projects/${projectId}`,
+                  {
+                    headers: {
+                      'Authorization': `Bearer ${this.authStore.token}`
+                    }
                   }
-                });
+                );
               } catch (error) {
                 console.error('Error al eliminar el proyecto:', error);
               }
             }
           }
 
+          // Limpiar los proyectos en el store de perfil
           this.profileStore.setProjects([]);
 
           // Añadir los nuevos proyectos uno por uno
           for (const project of this.form.projects) {
             try {
-              const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}api/projects`, {
-                profile_id: this.profileStore.profile.id,
-                title: project.title,
-                description: project.description,
-                url: project.url,
-                start_date: project.start_date,
-                end_date: project.end_date,
-                slug: project.slug
-              }, {
-                headers: {
-                  'Authorization': `Bearer ${this.authStore.token}`
+              const response = await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}api/projects`,
+                {
+                  profile_id: this.profileStore.profile.id,
+                  title: project.title,
+                  description: project.description,
+                  url: project.url,
+                  start_date: project.start_date,
+                  end_date: project.end_date,
+                  slug: project.slug
+                },
+                {
+                  headers: {
+                    'Authorization': `Bearer ${this.authStore.token}`
+                  }
                 }
-              });
-              // Actualizar el profileStore con el nuevo proyecto
+              );
+              // Actualizar el store de perfil con el nuevo proyecto
               this.profileStore.addProject(response.data);
             } catch (error) {
               console.error('Error al guardar el proyecto:', error);
@@ -346,13 +439,14 @@ export default {
         } catch (error) {
           console.error('Error al guardar los cambios:', error);
         } finally {
-          this.loadProjects()
+          // Recargar los proyectos actualizados
+          this.loadProjects();
         }
       }
     }
   },
   watch: {
-    // Watch para proyectos existentes
+    // Observador para generar slug automáticamente al cambiar el título de un proyecto existente
     'form.projects': {
       deep: true,
       handler(newProjects) {
@@ -363,7 +457,7 @@ export default {
         });
       }
     },
-    // Watch para el nuevo proyecto
+    // Observador para generar slug automáticamente al cambiar el título del nuevo proyecto
     'newProject.title'(newTitle) {
       if (newTitle) {
         this.newProject.slug = this.generateSlug(newTitle);
@@ -374,6 +468,7 @@ export default {
 </script>
 
 <style scoped>
+/* Contenedor del spinner de carga */
 .spinner-container {
   display: flex;
   justify-content: center;
@@ -381,6 +476,7 @@ export default {
   min-height: 200px;
 }
 
+/* Estilos base para la sección de edición */
 .edit-section {
   padding: 2rem;
 }
@@ -591,7 +687,7 @@ select,
   border-color: var(--neutral-textos-600);
 }
 
-/* Media Queries para tablets */
+/* Adaptaciones para tablets */
 @media (max-width: 1024px) {
   .edit-section {
     padding: 1.5rem;
@@ -624,7 +720,7 @@ select,
   }
 }
 
-/* Media Queries para móviles */
+/* Adaptaciones para móviles */
 @media (max-width: 768px) {
   .edit-section {
     padding: 1rem;

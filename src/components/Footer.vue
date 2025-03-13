@@ -1,12 +1,15 @@
 <template>
+  <!-- Pie de página con soporte para modo oscuro -->
   <footer class="footer" :class="{ 'dark-mode': isDarkMode }">
     <div class="container">
       <div class="footer__content">
+        <!-- Sección de copyright -->
         <div class="footer__copyright">
           TalentShowcase © 2025 by Ángel Pereira is licensed under
           <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" class="link--external">CC
             BY-NC-ND 4.0</a>
         </div>
+        <!-- Sección de contacto -->
         <div class="footer__contact">
           <router-link :to="{ name: 'Contact' }" class="link--internal">Contacta con nosotros</router-link>
         </div>
@@ -16,11 +19,13 @@
 </template>
 
 <script>
+// Importación del store de tema para el modo oscuro
 import { useThemeStore } from '../stores/themeStore';
 
 export default {
   name: 'Footer',
   computed: {
+    // Propiedad computada para determinar si está activado el modo oscuro
     isDarkMode() {
       return useThemeStore().isDarkMode;
     }
@@ -29,6 +34,7 @@ export default {
 </script>
 
 <style scoped>
+/* Estilos base para el pie de página */
 .footer {
   background-color: var(--neutral-textos-100);
   padding: 1.25rem 0;
@@ -47,18 +53,21 @@ export default {
   color: var(--neutral-textos-200);
 }
 
+/* Contenedor del contenido del pie de página */
 .footer__content {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
+/* Contenedor principal */
 .container {
   max-width: 90%;
   margin: 0 auto;
   padding: 0 1.25rem;
 }
 
+/* Estilos para enlaces externos */
 .link--external {
   color: var(--neutral-textos-700);
   text-decoration: underline;
@@ -69,10 +78,12 @@ export default {
   color: var(--primario-500);
 }
 
+/* Estilos para la sección de contacto */
 .footer__contact {
   text-align: right;
 }
 
+/* Estilos para enlaces internos */
 .link--internal {
   color: var(--neutral-textos-700);
   text-decoration: none;
@@ -83,7 +94,7 @@ export default {
   color: var(--primario-500);
 }
 
-/* Media Query for Tablet */
+/* Adaptaciones para móviles */
 @media (max-width: 768px) {
   .footer__content {
     flex-direction: column;
