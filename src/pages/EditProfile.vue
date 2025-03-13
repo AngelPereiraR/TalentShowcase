@@ -125,6 +125,7 @@ export default {
 .edit-profile {
   padding: 16rem 0 10rem;
   background-color: var(--neutral-textos-50);
+  min-height: 95vh;
 }
 
 .container {
