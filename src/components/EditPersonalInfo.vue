@@ -408,7 +408,9 @@ export default {
         // Manejo de errores
         console.error('Error al guardar los cambios:', error);
         // Manejo específico del error de slug
-        if (error.response && error.response.data.errors.slug !== null) {
+        if (error.response !== null && error.response.data.error) {
+          this.errors.general = 'No estás autenticado para realizar los cambios'
+        } else if (error.response && error.response.data.errors.slug !== null) {
           this.errors.slug = 'El Nombre ya ha sido escogido por otro usuario';
         } else {
           // Otros errores
